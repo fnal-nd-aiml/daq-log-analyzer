@@ -1,0 +1,37 @@
+# Slack Tester Bot Configuration
+
+# Slack credentials (for live mode testing)
+slack:
+  # Bot token (xoxb-...) - OAuth token with channels:history, channels:read scopes
+  bot_token: xoxb-secret-token
+
+  # App token (xapp-...) - Socket Mode token with connections:write scope
+  app_token: xapp-1-xapp-1-secret-token
+
+  # Channel for testing (can be name or ID)
+  channel: C00000000
+
+  # Target bot being tested
+  target_bot: LogAnalyzer Bot
+  target_bot_id: U000000000
+
+scenarios:
+  enabled:
+    - investigate
+    - message
+    - feedback
+    - ask
+    - list
+    - config
+    - workbinder
+    - admin
+    - help
+    - version
+
+mock:
+  simulate_delays: false
+  mock_llm_responses: true
+
+output:
+  format: "terminal"  # or "json"
+  verbose: true

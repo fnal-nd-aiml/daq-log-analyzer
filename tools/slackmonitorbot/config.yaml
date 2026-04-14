@@ -1,0 +1,29 @@
+# Slack Monitor Bot Configuration
+#
+# Copy credentials from the main config.yaml or set directly here.
+# These tokens are required for the monitor to connect to Slack.
+
+slack:
+  # Bot token (xoxb-...) - OAuth token with channels:history, channels:read scopes
+  bot_token: xoxb-secret-token
+
+  # App token (xapp-...) - Socket Mode token with connections:write scope
+  app_token: xapp-1-secret-token
+
+  # Channel to monitor and announce in (can be name or ID)
+  channel: C000000000
+
+  # Bot being monitored (for context in announcements)
+  target_bot: LogAnalyzer Bot
+  target_bot_id: U000000000
+
+  # Announce when monitor connects
+  announce_on_connect: true
+
+# Output settings
+output:
+  # Default output file (relative to project root)
+  file: slack-monitor.log
+
+  # Status file for tracking monitor state
+  status_file: slack-monitor.status

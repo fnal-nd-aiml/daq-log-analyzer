@@ -1,0 +1,318 @@
+# artdaq Deep Investigation Agent Configuration
+
+logging:
+  # Log level: DEBUG, INFO, WARNING, ERROR, CRITICAL
+  level: "INFO"
+
+llm:
+  # Active provider: "ollama", "anthropic", or "openrouter"
+  provider: "ollama"
+
+  # Common settings
+  temperature: 0.1
+  max_tokens: 50000
+
+  # Embedding configuration (separate since Anthropic/OpenRouter don't provide embeddings)
+  embedding:
+    provider: "ollama"
+    model: "nomic-embed-text"
+    host: "http://localhost:11434"
+
+  # Provider-specific configurations
+  providers:
+    ollama:
+      host: "http://localhost:11434"
+      model: "gpt-oss:120b"
+
+    anthropic:
+      # Custom vLLM endpoint (leave null for standard Anthropic API)
+      base_url: null  # e.g., "https://vllm-code.fnal.gov"
+      auth_token: null  # For vLLM auth
+      # api_key: null  # Standard Anthropic API key (set via ANTHROPIC_API_KEY env var)
+      models:
+        default: "claude-3-5-sonnet-20241022"
+        small_fast: null  # For quick/simple tasks
+        haiku: null  # Haiku equivalent
+        opus: null  # Opus equivalent
+
+    openrouter:
+      # base_url: "https://openrouter.ai/api/v1"  # Default
+      api_key: null  # Set via ARTDAQ_OPENROUTER_API_KEY env var
+      models:
+        default: "anthropic/claude-3.5-sonnet"
+        small_fast: "anthropic/claude-3-haiku"
+        haiku: "anthropic/claude-3-haiku"
+        opus: "anthropic/claude-3-opus"
+
+  # Legacy fields (for backward compatibility, prefer nested config above)
+  # model: "gpt-oss:120b"
+  # embedding_model: "nomic-embed-text"
+  # ollama_host: "http://localhost:11434"
+  # anthropic_api_key: null
+
+storage:
+  # Backend: "sqlite" (default, single-file) or "postgresql" (networked)
+  backend: "sqlite"
+
+  # SQLite settings (used when backend is "sqlite")
+  sqlite_path: "./data/knowledge.db"
+
+  # PostgreSQL settings (used when backend is "postgresql")
+  # Uncomment and configure for large-scale deployments
+  # postgres:
+  #   host: "localhost"
+  #   port: 5432
+  #   database: "daq_analyzer"
+  #   user: "postgres"
+  #   # password: set via ARTDAQ_POSTGRES_PASSWORD env var (recommended)
+  #   # password: "yourpassword"  # Alternative: set directly (less secure)
+  #   min_connections: 2
+  #   max_connections: 10
+  #   ssl: false
+
+  # ChromaDB persistence path (used by both backends)
+  chroma_path: "./data/chroma"
+
+investigation:
+  # Maximum hypotheses to consider
+  max_hypotheses: 10
+
+  # Maximum evidence-seeking iterations
+  max_evidence_iterations: 10
+
+  # Maximum depth of causal chains
+  max_chain_depth: 8
+
+  # Confidence bounds
+  confidence_floor: 0.1
+  confidence_ceiling: 0.95
+
+  # Maximum characters for documentation extraction
+  docs_max_chars: 12000
+
+  # Path to sub-component → doc file mapping YAML
+  subcomponent_map_path: "data/docs/sub-component-map.yaml"
+
+# Output display settings
+# These are defaults for both CLI and Slack bot
+output:
+  # Show detailed phase-by-phase progress during investigation
+  verbose: true
+
+  # Show LLM requests and responses
+  llm_logging: true
+
+  # Show complete LLM output without truncation
+  full_output: true
+
+# Slack bot configuration (optional)
+# Uncomment and configure to enable Slack integration
+slack:
+  # Socket Mode (recommended) - uses WebSocket connection
+  socket_mode: true
+  http_port: 3000
+
+  # Authentication (set via environment variables)
+  bot_token: xoxb-secret-token 
+  app_token: xapp-1-secret-token
+  signing_secret: null      # LOGANALYZER_SLACK_BOT_SIGNING_SECRET (for HTTP mode)
+
+  # Queue settings
+  max_queue_depth: 3
+
+  # Announcement channel (channel ID or name where bot announces connect/disconnect)
+  announce_channel: C0000000000
+
+# MessageFacility UDP message spy configuration
+msgspy:
+  port: 30000
+  bind_address: "0.0.0.0"
+  multicast_group: null  # e.g., "227.128.12.27"
+  multicast_interface: "0.0.0.0"
+  socket_buffer_size: 1048576
+  output_path: "./data/msgspy_output.log"
+  append: false
+  queue_size: 50000
+  flush_interval_ms: 100
+  batch_size: 200
+  poll_timeout_ms: 50
+  write_raw: true
+
+  # Duplicate message throttling
+  throttle:
+    enabled: false
+    max_repeat: 5          # After N consecutive identical messages, start suppressing
+    summary: true          # Emit "... repeated N times" line when streak ends
+    key_fields:            # Fields that define "identical" (default: just message body)
+      - message
+
+  # Field-based message filters
+  # Keys are MFMessage field names: severity, hostname, application, category, module
+  # Each field supports include (allowlist) and/or exclude (blocklist) with glob patterns
+  # A message must pass ALL field filters to be written
+  filters: {}
+  # Example:
+  #   severity:
+  #     exclude: ["DEBUG"]
+  #   hostname:
+  #     include: ["sbnd-gateway*", "sbnd-daq*"]
+  #   application:
+  #     exclude: ["test_*"]
+
+# Source repository configuration (optional)
+# Uncomment and configure to enable source code analysis from GitHub repos
+source:
+  # Directory to store cloned repositories
+  repos_path: "./data/repos"
+
+  # List of repositories to clone
+  repositories:
+    - url: "https://github.com/art-daq/artdaq.git"
+#     branch: "develop"  # optional, defaults to repo default branch
+    - url: "https://github.com/art-daq/artdaq_core.git"
+    - url: "https://github.com/SBNSoftware/sbndaq-artdaq-core.git"
+    - url: "https://github.com/SBNSoftware/sbndaq-artdaq.git"
+    - url: "https://github.com/SBNSoftware/sbndaq.git"
+    - url: "https://github.com/SBNSoftware/wibtools.git"
+
+
+#   # Authentication settings
+#   auth:
+#     # GitHub personal access token (or set ARTDAQ_GITHUB_TOKEN env var)
+#     github_token: null
+#     # Path to SSH private key for SSH URLs
+#     ssh_key_path: null
+#
+#   # Automatically update repos during init
+#   auto_update: true
+
+  # Automatically build code index after clone/update
+  #auto_index: true
+
+# Pipeline configuration (required)
+# Defines the investigation pipeline flow, phases, fast paths, and hooks
+pipeline:
+  # Fast paths for early termination or flow modification
+  fast_paths:
+    # Tier 1: High-confidence pattern match - exit early with cached result
+    - name: tier1_pattern_match
+      after: prior_retrieval
+      condition: "prior_knowledge.has_tier1_pattern()"
+      action: early_return
+      result_builder: pattern_fast_path
+
+    # Code hint fast path - continue with reduced iterations
+    - name: code_hint_fast_path
+      after: prior_retrieval
+      condition: "prior_knowledge.has_authoritative_code_hint()"
+      action: use_variant
+      variant: reduced_evidence
+
+    # High confidence skip - jump to synthesis when hypothesis is very strong
+    - name: high_confidence_skip
+      after: hypothesis_generation
+      condition: "len(hypotheses) > 0 and hypotheses[0].score > 0.9"
+      action: skip_to
+      skip_to: synthesis
+
+  # Named variants for different execution modes
+  variants:
+    # Reduced evidence iterations for code hint fast path
+    reduced_evidence:
+      phase_overrides:
+        evidence_seeking:
+          config:
+            max_iterations: 3
+
+    # Thorough mode with more iterations
+    thorough:
+      phase_overrides:
+        evidence_seeking:
+          config:
+            max_iterations: 20
+        adversarial_review:
+          enabled: true
+
+    # Quick mode - skip chains and adversarial review
+    quick:
+      phase_overrides:
+        causal_chains:
+          enabled: false
+        adversarial_review:
+          enabled: false
+        learning:
+          enabled: false
+
+  # Phase definitions
+  phases:
+    - id: log_bundle_analysis
+      executor: chronicler
+      inputs: [trigger_error, context_logs, source_files]
+      outputs: [trigger_error, context_logs]
+      config: {}
+
+    - id: prior_retrieval
+      executor: archivist
+      inputs: [trigger_error, context_logs]
+      outputs: [prior_knowledge]
+
+    - id: hypothesis_generation
+      executor: theorist
+      inputs: [trigger_error, context_logs, prior_knowledge]
+      outputs: [hypotheses]
+      config:
+        max_hypotheses: "${investigation.max_hypotheses}"
+
+    - id: evidence_seeking
+      executor: detective
+      inputs: [hypotheses, prior_knowledge]
+      outputs: [evidence, hypotheses]
+      config:
+        max_iterations: "${investigation.max_evidence_iterations}"
+
+    - id: causal_chains
+      executor: logician
+      inputs: [hypotheses, evidence, prior_knowledge]
+      outputs: [causal_chains]
+      filter:
+        hypotheses:
+          field: hypotheses
+          condition: "score >= 0.1"
+          limit: 3
+
+    - id: adversarial_review
+      executor: skeptic
+      inputs: [hypotheses, causal_chains, evidence, prior_knowledge]
+      outputs: [challenges]
+      requires: "len(causal_chains) > 0 and len(hypotheses) > 0"
+
+    - id: outcome_assessment
+      executor: judge
+      inputs: [trigger_error, hypotheses, evidence, challenges]
+      outputs: [outcome]
+
+    - id: synthesis
+      executor: synthesizer
+      inputs: [trigger_error, investigation, outcome, hypotheses, causal_chains, evidence, prior_knowledge]
+      outputs: [result]
+
+    - id: learning
+      executor: learner
+      inputs: [investigation]
+      outputs: [patterns]
+      enabled: "${investigation.enable_auto_learning}"
+
+  # Conditional branches (optional)
+  branches:
+    - after: prior_retrieval
+      condition: "prior_knowledge.has_high_confidence_pattern()"
+      skip_to: synthesis
+
+  # Side effect hooks
+  hooks:
+    - after: synthesis
+      action: store_investigation
+    - after: synthesis
+      action: store_binder
+    - on_error: true
+      action: store_failed_investigation

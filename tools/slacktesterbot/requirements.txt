@@ -1,0 +1,11 @@
+# Slack Tester Bot Dependencies
+pydantic>=2.0
+pydantic-settings>=2.0
+rich>=13.0
+PyYAML>=6.0
+slack-bolt>=1.18
+slack-sdk>=3.21
+aiohttp>=3.8.0
+aiosqlite>=0.19.0
+httpx>=0.25.0
+typer>=0.9.0

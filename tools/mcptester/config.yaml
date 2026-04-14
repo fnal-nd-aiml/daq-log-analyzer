@@ -1,0 +1,37 @@
+# MCP Tester Configuration
+
+# Scenarios to run in 'run' mode
+scenarios:
+  enabled:
+    - binders
+    - artifacts
+    - audit
+    - patterns
+    - calibrations
+    - specialized
+    - llm_tracing
+    - investigation
+    - commands
+
+# Mock behavior settings
+mock:
+  # Simulate realistic delays for mock mode
+  simulate_delays: false
+  # Use mock LLM responses for command tools
+  mock_llm_responses: true
+  # Timeout for mock investigations (seconds)
+  investigation_timeout: 5
+
+# Output settings
+output:
+  format: "terminal"  # or "json"
+  verbose: true
+
+# Live mode settings (for running against real MCP server)
+live:
+  # MCP server URL for SSE/HTTP transport
+  server_url: "http://localhost:8001"
+  # Transport type: stdio, sse, streamable-http
+  transport: "sse"
+  # Timeout for live server responses (seconds)
+  timeout: 30
