@@ -1,0 +1,108 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "artdaq-agent"
+version = "0.1.0"
+description = "LLM-powered root cause analysis for artdaq DAQ software"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+    {name = "artdaq team"}
+]
+keywords = ["artdaq", "daq", "debugging", "llm", "root-cause-analysis"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+# Keep in sync with requirements.txt. This list was previously missing openai,
+# asyncpg, mcp, slack-bolt, slack-sdk, starlette and aiohttp, so a plain
+# `pip install artdaq-agent` produced a package that failed at import.
+dependencies = [
+    "pydantic>=2.0,<3",
+    "pyyaml>=6.0,<7",
+    "httpx>=0.25.0,<1",
+    "ollama>=0.1.0,<1",
+    "anthropic>=0.18.0,<2",
+    "openai>=1.0.0,<4",
+    "chromadb>=0.4.0,<2",
+    "typer>=0.9.0,<1",
+    "rich>=13.0.0,<16",
+    "aiosqlite>=0.19.0,<1",
+    "asyncpg>=0.29.0,<1",
+    "fastapi>=0.100.0,<1",
+    "uvicorn>=0.22.0,<1",
+    "pydantic-settings>=2.0.0,<3",
+    "mcp>=1.2.0,<2",
+    "slack-bolt>=1.18.0,<2",
+    "slack-sdk>=3.21.0,<4",
+    "starlette>=0.27.0,<2",
+    "aiohttp>=3.8.0,<4",
+    "tree-sitter>=0.21.0,<1",
+    "tree-sitter-cpp>=0.21.0,<1",
+    "tree-sitter-python>=0.21.0,<1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0,<10",
+    "pytest-asyncio>=0.21.0,<2",
+    "pytest-cov>=4.0,<8",
+    "ruff>=0.1.0,<1",
+    "mypy>=1.0,<3",
+    "types-PyYAML>=6.0,<7",
+]
+
+[project.scripts]
+artdaq-agent = "srcs.cli.main:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["srcs"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+addopts = "-v --tb=short"
+filterwarnings = [
+    "ignore:install \"ipywidgets\" for Jupyter support:UserWarning",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W"]
+ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+# Test classes are named after the constants/symbols under test (e.g. TestPHASE_NAMES),
+# and locally-defined mock classes (MockStore) mirror the names they stand in for.
+"tests/**" = ["N801", "N806"]
+
+[tool.mypy]
+# No `python_version` pin: forcing 3.10 while running under a newer interpreter
+# made mypy abort on third-party stubs that use 3.12+ syntax (numpy), reporting
+# "errors prevented further checking" and checking nothing at all. Let mypy use
+# the running interpreter's version; `requires-python` already sets the floor.
+#
+# The pydantic plugin is required for a pydantic-v2 codebase: without it mypy
+# does not understand Field() defaults and reports every model construction
+# that omits a defaulted field as a missing-argument error.
+plugins = ["pydantic.mypy"]
+warn_return_any = true
+warn_unused_ignores = true
+disallow_untyped_defs = true
+
+# Third-party packages that ship no type information.
+[[tool.mypy.overrides]]
+module = ["asyncpg.*", "chromadb.*", "mcp.*", "ollama.*", "slack_bolt.*", "slack_sdk.*", "tree_sitter.*"]
+ignore_missing_imports = true

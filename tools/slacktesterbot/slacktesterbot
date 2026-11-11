@@ -1,0 +1,24 @@
+#!/bin/bash
+# Slack Tester Bot - Functional testing for the Slack bot
+
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+
+# Check for virtual environment
+if [ -z "$VIRTUAL_ENV" ]; then
+    if [ -f "$PROJECT_ROOT/venv/bin/activate" ]; then
+        source "$PROJECT_ROOT/venv/bin/activate"
+    else
+        echo "Error: No virtual environment found. Run ./setup.sh first." >&2
+        exit 1
+    fi
+fi
+
+# Add project root to PYTHONPATH
+export PYTHONPATH="$PROJECT_ROOT:$PYTHONPATH"
+
+# Run the tester
+cd "$PROJECT_ROOT"
+python -m tools.slacktesterbot.slacktester "$@"

@@ -5,7 +5,7 @@ Category: Utility
 Author: artdaq team
 Depends: None
 Exports: SCHEMA
-Complexity: Medium | Lines: 208
+Complexity: Medium | Lines: 212
 """
 
 SCHEMA = """
@@ -25,7 +25,8 @@ CREATE TABLE IF NOT EXISTS investigations (
     duration_seconds REAL,
     started_at TIMESTAMP,
     completed_at TIMESTAMP,
-    processing_tier INTEGER DEFAULT 3
+    processing_tier INTEGER DEFAULT 3,
+    confidence REAL
 );
 
 -- Normalized hypotheses table for cross-investigation queries
@@ -213,6 +214,9 @@ CREATE INDEX IF NOT EXISTS idx_feedback_was_correct
     ON feedback_records(was_correct);
 CREATE INDEX IF NOT EXISTS idx_patterns_confidence
     ON error_patterns(pattern_confidence DESC);
+-- Serves find_pattern: WHERE is_active ... ORDER BY times_seen DESC LIMIT N
+CREATE INDEX IF NOT EXISTS idx_patterns_active_seen
+    ON error_patterns(is_active, times_seen DESC);
 CREATE INDEX IF NOT EXISTS idx_investigations_matched_pattern
     ON investigations(matched_pattern_id);
 """

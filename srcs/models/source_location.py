@@ -5,12 +5,11 @@ Category: Data
 Author: artdaq team
 Depends: pydantic
 Exports: SourceLocation, SourceLocationResult
-Complexity: Low | Lines: 43
+Complexity: Low | Lines: 41
 """
 
 from pydantic import BaseModel, Field
 from .base import generate_id
-
 
 class SourceLocation(BaseModel):
     id: str = Field(default_factory=generate_id)
@@ -31,9 +30,8 @@ class SourceLocation(BaseModel):
     call_graph_diagram: str | None = None
     function_summaries: list[dict] = Field(default_factory=list)
     match_score: float = Field(default=0.0, ge=0.0, le=1.0)
-    search_pattern: str = ""
+    search_pattern: str = ''
     is_log_statement: bool = False
-
 
 class SourceLocationResult(BaseModel):
     original_message: str

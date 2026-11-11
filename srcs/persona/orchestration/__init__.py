@@ -5,21 +5,11 @@ Category: Config
 Author: artdaq team
 Depends: None
 Exports: None
-Complexity: Low | Lines: 15
+Complexity: Low | Lines: 5
 """
 
 from .evidence_orchestrator import EvidenceOrchestrator
-from .relevance import LLMRelevanceAssessor, RelevanceAssessment
+from .evidence_relevance import LLMRelevanceAssessor, RelevanceAssessment
 from .retrieval_orchestrator import ParsedErrorContext, ParsedNumericValue, RetrievalOrchestrator
 from .strategy import EvidenceStrategy, QueryEffectiveness
-
-__all__ = [
-    "EvidenceOrchestrator",
-    "RetrievalOrchestrator",
-    "EvidenceStrategy",
-    "QueryEffectiveness",
-    "LLMRelevanceAssessor",
-    "RelevanceAssessment",
-    "ParsedNumericValue",
-    "ParsedErrorContext",
-]
+__all__ = ['EvidenceOrchestrator', 'RetrievalOrchestrator', 'EvidenceStrategy', 'QueryEffectiveness', 'LLMRelevanceAssessor', 'RelevanceAssessment', 'ParsedNumericValue', 'ParsedErrorContext']

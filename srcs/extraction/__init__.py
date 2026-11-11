@@ -5,7 +5,7 @@ Category: Config
 Author: artdaq team
 Depends: None
 Exports: None
-Complexity: Low | Lines: 27
+Complexity: Low | Lines: 7
 """
 
 from .errors import ExtractionError, IndexError, ParseError, SourceLocatorError
@@ -14,24 +14,4 @@ from .indexer import CodeIndex, CodeIndexConfig
 from .parser import CodeParser, ParsedFile, ParsedNode
 from .source_locator import SourceLocator
 from .summarizer import FunctionSummarizer, FunctionSummary, SummarizerConfig, detect_language
-
-__all__ = [
-    "CodeParser",
-    "ParsedFile",
-    "ParsedNode",
-    "CodeExtractor",
-    "CodeElement",
-    "FunctionInfo",
-    "ClassInfo",
-    "CodeIndex",
-    "CodeIndexConfig",
-    "SourceLocator",
-    "FunctionSummarizer",
-    "FunctionSummary",
-    "SummarizerConfig",
-    "detect_language",
-    "ExtractionError",
-    "ParseError",
-    "IndexError",
-    "SourceLocatorError",
-]
+__all__ = ['CodeParser', 'ParsedFile', 'ParsedNode', 'CodeExtractor', 'CodeElement', 'FunctionInfo', 'ClassInfo', 'CodeIndex', 'CodeIndexConfig', 'SourceLocator', 'FunctionSummarizer', 'FunctionSummary', 'SummarizerConfig', 'detect_language', 'ExtractionError', 'ParseError', 'IndexError', 'SourceLocatorError']

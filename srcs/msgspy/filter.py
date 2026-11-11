@@ -5,7 +5,7 @@ Category: Utility
 Author: artdaq team
 Depends: None
 Exports: MessageFilter, _PREFIX_RE
-Complexity: Low | Lines: 87
+Complexity: Low | Lines: 85
 """
 
 import logging
@@ -14,14 +14,12 @@ from fnmatch import fnmatch
 from .config import FieldFilter, ThrottleConfig
 from .errors import ParseError
 from .parser import parse
-
 logger = logging.getLogger(__name__)
-_PREFIX_RE = re.compile(b"^UDPMFMESSAGE\\d+\\|")
-
+_PREFIX_RE = re.compile(b'^UDPMFMESSAGE\\d+\\|')
 
 class MessageFilter:
 
-    def __init__(self, filters: dict[str, FieldFilter], throttle: ThrottleConfig, write_raw: bool = True) -> None:
+    def __init__(self, filters: dict[str, FieldFilter], throttle: ThrottleConfig, write_raw: bool=True) -> None:
         self._filters = filters
         self._throttle = throttle
         self._write_raw = write_raw
@@ -58,7 +56,7 @@ class MessageFilter:
                     self._messages_filtered += 1
                     return []
         if self._throttle.enabled:
-            key = "|".join((str(getattr(msg, f, "")) for f in self._throttle.key_fields))
+            key = '|'.join((str(getattr(msg, f, '')) for f in self._throttle.key_fields))
             return self._apply_throttle(key, data)
         return [self._format(data)]
 
@@ -88,10 +86,10 @@ class MessageFilter:
         return result
 
     def _build_summary(self, suppressed: int) -> bytes:
-        return f"  ... repeated {suppressed} more times".encode("utf-8")
+        return f'  ... repeated {suppressed} more times'.encode('utf-8')
 
     def _format(self, data: bytes) -> bytes:
         if self._write_raw:
             return data
-        cleaned = _PREFIX_RE.sub(b"", data)
+        cleaned = _PREFIX_RE.sub(b'', data)
         return cleaned

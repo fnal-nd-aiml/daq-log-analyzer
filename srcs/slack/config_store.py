@@ -3,20 +3,42 @@ File: config_store.py
 Purpose: Per-channel and per-user settings storage.
 Category: Utility
 Author: artdaq team
-Depends: None
-Exports: ChannelConfig, ConfigStore
-Complexity: Medium | Lines: 109
+Depends: config_paths
+Exports: OutputDefaults, ChannelConfig, ConfigStore, load_output_defaults
+Complexity: Medium | Lines: 113
 """
 
 from __future__ import annotations
 import json
 import logging
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, fields
 from pathlib import Path
 from typing import Any
-
+import yaml
+from srcs.config_paths import resolve_config_path
 logger = logging.getLogger(__name__)
 
+@dataclass(frozen=True)
+class OutputDefaults:
+    verbose: bool = False
+    llm_logging: bool = False
+    full_output: bool = False
+
+def load_output_defaults(config_file: Path | None=None) -> OutputDefaults | None:
+    path = resolve_config_path(config_file)
+    if path is None:
+        return None
+    try:
+        with open(path) as f:
+            data = yaml.safe_load(f) or {}
+    except (OSError, yaml.YAMLError) as e:
+        logger.warning('Could not read output defaults from %s: %s', path, e)
+        return None
+    section = data.get('output') if isinstance(data, dict) else None
+    if not isinstance(section, dict):
+        return None
+    names = {f.name for f in fields(OutputDefaults)}
+    return OutputDefaults(**{k: bool(v) for k, v in section.items() if k in names})
 
 @dataclass
 class ChannelConfig:
@@ -25,28 +47,17 @@ class ChannelConfig:
     full_output: bool = False
 
     def to_dict(self) -> dict[str, Any]:
-        return {"verbose": self.verbose, "llm_logging": self.llm_logging, "full_output": self.full_output}
+        return {'verbose': self.verbose, 'llm_logging': self.llm_logging, 'full_output': self.full_output}
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any], defaults: Any | None = None) -> ChannelConfig:
+    def from_dict(cls, data: dict[str, Any], defaults: Any | None=None) -> ChannelConfig:
         if defaults:
-            return cls(
-                verbose=data.get("verbose", defaults.verbose),
-                llm_logging=data.get("llm_logging", defaults.llm_logging),
-                full_output=data.get("full_output", defaults.full_output),
-            )
-        return cls(
-            verbose=data.get("verbose", False),
-            llm_logging=data.get("llm_logging", False),
-            full_output=data.get("full_output", False),
-        )
+            return cls(verbose=data.get('verbose', defaults.verbose), llm_logging=data.get('llm_logging', defaults.llm_logging), full_output=data.get('full_output', defaults.full_output))
+        return cls(verbose=data.get('verbose', False), llm_logging=data.get('llm_logging', False), full_output=data.get('full_output', False))
 
     @classmethod
     def from_output_config(cls, output_config: Any) -> ChannelConfig:
-        return cls(
-            verbose=output_config.verbose, llm_logging=output_config.llm_logging, full_output=output_config.full_output
-        )
-
+        return cls(verbose=output_config.verbose, llm_logging=output_config.llm_logging, full_output=output_config.full_output)
 
 @dataclass
 class ConfigStore:
@@ -60,7 +71,7 @@ class ConfigStore:
 
     @property
     def _config_file(self) -> Path:
-        return self.data_dir / "slack_config.json"
+        return self.data_dir / 'slack_config.json'
 
     def _load(self) -> None:
         if self._loaded:
@@ -71,7 +82,7 @@ class ConfigStore:
                 for key, value in data.items():
                     self._configs[key] = ChannelConfig.from_dict(value, self.output_defaults)
             except Exception as e:
-                logger.warning(f"Failed to load slack config: {e}")
+                logger.warning(f'Failed to load slack config: {e}')
         self._loaded = True
 
     def _save(self) -> None:
@@ -80,7 +91,7 @@ class ConfigStore:
             data = {key: config.to_dict() for key, config in self._configs.items()}
             self._config_file.write_text(json.dumps(data, indent=2))
         except Exception as e:
-            logger.warning(f"Failed to save slack config: {e}")
+            logger.warning(f'Failed to save slack config: {e}')
 
     def get_config(self, channel_id: str) -> ChannelConfig:
         self._load()
@@ -94,12 +105,12 @@ class ConfigStore:
     def set_setting(self, channel_id: str, setting: str, value: bool) -> bool:
         self._load()
         config = self.get_config(channel_id)
-        setting = setting.lower().replace("-", "_")
-        if setting == "verbose":
+        setting = setting.lower().replace('-', '_')
+        if setting == 'verbose':
             config.verbose = value
-        elif setting == "llm_logging":
+        elif setting == 'llm_logging':
             config.llm_logging = value
-        elif setting == "full_output":
+        elif setting == 'full_output':
             config.full_output = value
         else:
             return False
@@ -108,12 +119,5 @@ class ConfigStore:
 
     def format_config(self, channel_id: str) -> str:
         config = self.get_config(channel_id)
-        lines = [
-            "*Current Settings:*",
-            f"• `verbose`: {('on' if config.verbose else 'off')} - Show detailed phase-by-phase progress",
-            f"• `llm-logging`: {('on' if config.llm_logging else 'off')} - Show LLM requests and responses",
-            f"• `full-output`: {('on' if config.full_output else 'off')} - Show complete LLM output without truncation",
-            "",
-            "_Defaults come from `output` section in config.yaml_",
-        ]
-        return "\n".join(lines)
+        lines = ['*Current Settings:*', f"• `verbose`: {('on' if config.verbose else 'off')} - Show detailed phase-by-phase progress", f"• `llm-logging`: {('on' if config.llm_logging else 'off')} - Show LLM requests and responses", f"• `full-output`: {('on' if config.full_output else 'off')} - Show complete LLM output without truncation", '', '_Defaults come from `output` section in config.yaml_']
+        return '\n'.join(lines)

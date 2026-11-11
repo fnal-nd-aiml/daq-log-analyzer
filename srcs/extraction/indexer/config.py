@@ -5,24 +5,20 @@ Category: Utility
 Author: artdaq team
 Depends: None
 Exports: CodeIndexConfig
-Complexity: Low | Lines: 22
+Complexity: Low | Lines: 18
 """
 
 from dataclasses import dataclass, field
 from pathlib import Path
 
-
 def _default_extensions() -> list[str]:
-    return [".cpp", ".cxx", ".cc", ".c", ".h", ".hpp", ".py"]
-
+    return ['.cpp', '.cxx', '.cc', '.c', '.h', '.hpp', '.py']
 
 def _default_exclude_patterns() -> list[str]:
-    return ["**/build/**", "**/test/**", "**/.git/**"]
-
+    return ['**/build/**', '**/test/**', '**/.git/**']
 
 def _default_index_path() -> Path:
-    return Path("./data/code_index.db")
-
+    return Path('./data/code_index.db')
 
 @dataclass
 class CodeIndexConfig:

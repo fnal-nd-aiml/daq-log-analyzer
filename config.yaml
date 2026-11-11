@@ -6,17 +6,32 @@ logging:
 
 llm:
   # Active provider: "ollama", "anthropic", or "openrouter"
-  provider: "ollama"
+  # "openrouter" is a generic OpenAI-compatible client; here it points at the
+  # FNAL LiteLLM gateway (keys issued at https://llm-keys.fnal.gov/).
+  provider: "openrouter"
 
   # Common settings
   temperature: 0.1
   max_tokens: 50000
 
+  # Resilience: every LLM call runs under a deadline and retries transient
+  # failures (connection resets, timeouts, 429s, 5xx) with jittered backoff.
+  # Permanent failures (bad request, auth, schema violations) are not retried.
+  timeout_seconds: 300.0           # Per-attempt deadline for generation
+  embedding_timeout_seconds: 60.0  # Per-attempt deadline for embeddings
+  max_retries: 2                   # Retries after the first attempt
+  retry_base_delay: 1.0            # Backoff base, seconds
+  retry_max_delay: 30.0            # Backoff ceiling, seconds
+  embedding_concurrency: 8         # Max concurrent calls in embed_batch()
+
   # Embedding configuration (separate since Anthropic/OpenRouter don't provide embeddings)
+  # provider "ollama": host is the Ollama server.
+  # provider "openai": host is an OpenAI-compatible base URL; api_key defaults
+  # to the openrouter key (ARTDAQ_OPENROUTER_API_KEY).
   embedding:
-    provider: "ollama"
-    model: "nomic-embed-text"
-    host: "http://localhost:11434"
+    provider: "openai"
+    model: "nomic-ai/nomic-embed-text-v1.5"
+    host: "https://litellm.fnal.gov/v1"
 
   # Provider-specific configurations
   providers:
@@ -36,13 +51,14 @@ llm:
         opus: null  # Opus equivalent
 
     openrouter:
-      # base_url: "https://openrouter.ai/api/v1"  # Default
-      api_key: null  # Set via ARTDAQ_OPENROUTER_API_KEY env var
+      base_url: "https://litellm.fnal.gov/v1"  # FNAL LiteLLM (default: openrouter.ai)
+      api_key: null  # Set via ARTDAQ_OPENROUTER_API_KEY env var (sk-... from llm-keys.fnal.gov)
+      reasoning_effort: "medium"  # low/medium/high; null omits the parameter
       models:
-        default: "anthropic/claude-3.5-sonnet"
-        small_fast: "anthropic/claude-3-haiku"
-        haiku: "anthropic/claude-3-haiku"
-        opus: "anthropic/claude-3-opus"
+        default: "azure/claude-haiku-5-5"
+        small_fast: null  # null tiers fall back to default
+        haiku: null
+        opus: null
 
   # Legacy fields (for backward compatibility, prefer nested config above)
   # model: "gpt-oss:120b"
@@ -113,15 +129,15 @@ slack:
   http_port: 3000
 
   # Authentication (set via environment variables)
-  bot_token: xoxb-secret-token 
-  app_token: xapp-1-secret-token
+  bot_token: null  # set LOGANALYZER_SLACK_BOT_BOT_TOKEN in .env.slack
+  app_token: null  # set LOGANALYZER_SLACK_BOT_APP_TOKEN in .env.slack
   signing_secret: null      # LOGANALYZER_SLACK_BOT_SIGNING_SECRET (for HTTP mode)
 
   # Queue settings
   max_queue_depth: 3
 
   # Announcement channel (channel ID or name where bot announces connect/disconnect)
-  announce_channel: C0000000000
+  announce_channel: C08827X3MSN
 
 # MessageFacility UDP message spy configuration
 msgspy:
@@ -215,8 +231,24 @@ pipeline:
       action: skip_to
       skip_to: synthesis
 
+    # Adaptive depth: a genuinely ambiguous result (3+ candidates and no
+    # strong leader) -> spend MORE evidence iterations to discriminate.
+    - name: ambiguous_thorough
+      after: hypothesis_generation
+      condition: "len(hypotheses) > 2 and hypotheses[0].score < 0.6"
+      action: use_variant
+      variant: thorough
+
+    # NOTE: a "focused" fast path that *reduced* evidence iterations on a high
+    # Phase-1 score was intentionally removed: that score is an un-evidenced
+    # prior, and the evidence loop already self-limits via _should_stop once a
+    # clear winner emerges, so a static cut only risked under-investigating a
+    # genuinely uncertain case. Adaptive depth here only scales effort UP
+    # (ambiguous -> thorough) or skips the trivial case (high_confidence_skip).
+
   # Named variants for different execution modes
   variants:
+
     # Reduced evidence iterations for code hint fast path
     reduced_evidence:
       phase_overrides:

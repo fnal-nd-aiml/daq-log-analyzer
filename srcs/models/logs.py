@@ -5,12 +5,11 @@ Category: Data
 Author: artdaq team
 Depends: pydantic
 Exports: Log, ErrorSignature, LogContext, SourceFile
-Complexity: Medium | Lines: 60
+Complexity: Medium | Lines: 55
 """
 
 from datetime import datetime
 from pydantic import BaseModel, Field
-
 
 class Log(BaseModel):
     timestamp: datetime
@@ -22,14 +21,13 @@ class Log(BaseModel):
     message: str
     raw_line: str | None = None
 
-
 class ErrorSignature(BaseModel):
     function: str | None = None
     message_pattern: str
-    level: str = "ERROR"
+    level: str = 'ERROR'
     component: str | None = None
 
-    def matches(self, other: "ErrorSignature") -> bool:
+    def matches(self, other: 'ErrorSignature') -> bool:
         if self.level != other.level:
             return False
         if not self._message_matches(self.message_pattern, other.message_pattern):
@@ -47,22 +45,19 @@ class ErrorSignature(BaseModel):
 
         def to_regex(pattern: str) -> str:
             escaped = re.escape(pattern)
-            escaped = escaped.replace("\\{N\\}", "\\d+")
-            escaped = escaped.replace("\\{HEX\\}", "0x[0-9a-fA-F]+")
-            return f"^{escaped}$"
-
+            escaped = escaped.replace('\\{N\\}', '\\d+')
+            escaped = escaped.replace('\\{HEX\\}', '0x[0-9a-fA-F]+')
+            return f'^{escaped}$'
         regex1 = to_regex(pattern1)
         try:
             return bool(re.match(regex1, pattern2)) or pattern1 == pattern2
         except re.error:
             return pattern1 == pattern2
 
-
 class LogContext(BaseModel):
     trigger_error: Log
     context_logs: list[Log] = Field(default_factory=list)
     time_window_seconds: float = 60.0
-
 
 class SourceFile(BaseModel):
     filename: str

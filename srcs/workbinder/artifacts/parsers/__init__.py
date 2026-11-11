@@ -5,7 +5,7 @@ Category: Config
 Author: artdaq team
 Depends: None
 Exports: None
-Complexity: Low | Lines: 40
+Complexity: Low | Lines: 11
 """
 
 from .base import BaseParser
@@ -18,33 +18,4 @@ from .hypothesis import HypothesisItem, HypothesisParser, HypothesisResponse
 from .json_utils import extract_json, fix_json, parse_json_response
 from .log_bundle import LogBundleParser, LogBundleResponse
 from .merged_timeline import MergedTimelineParser, TimelineResponse
-
-__all__ = [
-    "BaseParser",
-    "BoardReaderIdentificationParser",
-    "BoardReaderIdentificationResponse",
-    "extract_json",
-    "fix_json",
-    "parse_json_response",
-    "MergedTimelineParser",
-    "TimelineResponse",
-    "HypothesisParser",
-    "HypothesisItem",
-    "HypothesisResponse",
-    "EvidenceQueryParser",
-    "QueryItem",
-    "QueryResponse",
-    "CausalChainParser",
-    "ChainStepItem",
-    "ChainResponse",
-    "ChallengeParser",
-    "ChallengeItem",
-    "ChallengeResponse",
-    "ConclusionParser",
-    "ConclusionItem",
-    "ConclusionResponse",
-    "SubCauseItem",
-    "KeyFileItem",
-    "LogBundleParser",
-    "LogBundleResponse",
-]
+__all__ = ['BaseParser', 'BoardReaderIdentificationParser', 'BoardReaderIdentificationResponse', 'extract_json', 'fix_json', 'parse_json_response', 'MergedTimelineParser', 'TimelineResponse', 'HypothesisParser', 'HypothesisItem', 'HypothesisResponse', 'EvidenceQueryParser', 'QueryItem', 'QueryResponse', 'CausalChainParser', 'ChainStepItem', 'ChainResponse', 'ChallengeParser', 'ChallengeItem', 'ChallengeResponse', 'ConclusionParser', 'ConclusionItem', 'ConclusionResponse', 'SubCauseItem', 'KeyFileItem', 'LogBundleParser', 'LogBundleResponse']

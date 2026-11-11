@@ -1,0 +1,11 @@
+%MSG-w EventBuilder5_art1_FragmentWatcher:   FragmentWatcher:artdaqFragWatcher@BeginModule 16-Jan-2026 15:25:11 CST  run: 14001 subRun: 1 event: 74816 FragmentWatcher_module.cc:226
+Event 74816: total_fragments=346, fragmentIDs for 3 empty_fragments: 8194, 8197, 8207
+%MSG
+…
+%MSG-w EventBuilder5_art1_FragmentWatcher:   FragmentWatcher:artdaqFragWatcher@BeginModule 16-Jan-2026 15:25:56 CST  run: 14001 subRun: 1 event: 74843 FragmentWatcher_module.cc:226
+Event 74843: total_fragments=346, fragmentIDs for 2 empty_fragments: 8194, 8207
+…
+%MSG-w EventBuilder5_art1_FragmentWatcher:   FragmentWatcher:artdaqFragWatcher@BeginModule 16-Jan-2026 15:28:38 CST  run: 14001 subRun: 1 event: 74969 FragmentWatcher_module.cc:226
+Event 74969: total_fragments=346, fragmentIDs for 1 empty_fragments: 8207
+%MSG
+

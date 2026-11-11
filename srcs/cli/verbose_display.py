@@ -5,7 +5,7 @@ Category: Utility
 Author: artdaq team
 Depends: callbacks, phase_formatter, persona, rich
 Exports: VerboseDisplay, create_verbose_callback
-Complexity: Low | Lines: 29
+Complexity: Low | Lines: 27
 """
 
 from rich.console import Console
@@ -15,10 +15,9 @@ from srcs.models.callbacks import PhaseEvent
 from srcs.output.phase_formatter import PhaseFormatter
 from srcs.persona import PERSONAS
 
-
 class VerboseDisplay:
 
-    def __init__(self, console: Console | None = None):
+    def __init__(self, console: Console | None=None):
         self.console = console or Console()
         self.formatter = PhaseFormatter()
 
@@ -27,13 +26,12 @@ class VerboseDisplay:
         if not md_text:
             return
         persona = PERSONAS.get(event.phase)
-        color = persona.color if persona else "white"
-        if event.event_type == "start":
+        color = persona.color if persona else 'white'
+        if event.event_type == 'start':
             self.console.print()
             self.console.print(Panel(Markdown(md_text), border_style=color, padding=(0, 1)))
         else:
             self.console.print(Markdown(md_text), style=color)
 
-
-def create_verbose_callback(console: Console | None = None) -> "VerboseDisplay":
+def create_verbose_callback(console: Console | None=None) -> 'VerboseDisplay':
     return VerboseDisplay(console)

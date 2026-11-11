@@ -5,7 +5,7 @@ Category: Utility
 Author: artdaq team
 Depends: None
 Exports: DataRouter
-Complexity: Medium | Lines: 89
+Complexity: Medium | Lines: 86
 """
 
 import logging
@@ -13,18 +13,15 @@ from typing import Any
 from .conditions import ConditionEvaluator
 from .config import FilterConfig, PhaseConfig, PipelineConfig
 from .contracts import DataContracts
-
 logger = logging.getLogger(__name__)
-
 
 class DataRouter:
 
-    def __init__(self, config: PipelineConfig, validate_contracts: bool = True):
+    def __init__(self, config: PipelineConfig, validate_contracts: bool=True):
         self._config = config
         self._validate_contracts = validate_contracts
         self._evaluator = ConditionEvaluator()
-
-    GLOBAL_CONTEXT_KEYS = ["investigation", "kb", "llm", "code_index", "source_locator", "config", "binder"]
+    GLOBAL_CONTEXT_KEYS = ['investigation', 'kb', 'llm', 'code_index', 'source_locator', 'config', 'binder']
 
     def get_inputs(self, phase: PhaseConfig, context: dict[str, Any]) -> dict[str, Any]:
         inputs = {}
@@ -64,18 +61,18 @@ class DataRouter:
         if filter_config.condition:
             result = self._filter_by_condition(result, filter_config.condition)
         if filter_config.limit is not None and filter_config.limit > 0:
-            result = result[: filter_config.limit]
+            result = result[:filter_config.limit]
         return result
 
     def _filter_by_condition(self, items: list, condition: str) -> list:
         result = []
         for item in items:
-            item_context = {"item": item}
-            if hasattr(item, "__dict__"):
+            item_context = {'item': item}
+            if hasattr(item, '__dict__'):
                 for attr, val in vars(item).items():
-                    if not attr.startswith("_"):
+                    if not attr.startswith('_'):
                         item_context[attr] = val
-            elif hasattr(item, "model_dump"):
+            elif hasattr(item, 'model_dump'):
                 item_context.update(item.model_dump())
             try:
                 if self._evaluator.evaluate(condition, item_context):
@@ -93,7 +90,7 @@ class DataRouter:
         return missing
 
     def create_initial_context(self, trigger_error: Any, context_logs: list) -> dict[str, Any]:
-        context = {"trigger_error": trigger_error, "context_logs": context_logs}
+        context = {'trigger_error': trigger_error, 'context_logs': context_logs}
         if self._validate_contracts:
             DataContracts.validate_context(context)
         return context

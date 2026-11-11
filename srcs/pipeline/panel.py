@@ -5,7 +5,7 @@ Category: Utility
 Author: artdaq team
 Depends: None
 Exports: AggregationStrategy, PanelExecutor
-Complexity: Medium | Lines: 314
+Complexity: Medium | Lines: 288
 """
 
 import asyncio
@@ -15,26 +15,21 @@ from enum import Enum
 from typing import Any
 from .config import AggregationConfig, CustomAggregatorConfig, PanelConfig, PerKeyAggregationConfig, WeightedVoteConfig
 from .executor import ExecutorRegistry, PhaseExecutor
-
 logger = logging.getLogger(__name__)
 
-
 class AggregationStrategy(str, Enum):
-    MERGE = "merge"
-    VOTE = "vote"
-    BEST_SCORE = "best_score"
-    CONSENSUS = "consensus"
-
+    MERGE = 'merge'
+    VOTE = 'vote'
+    BEST_SCORE = 'best_score'
+    CONSENSUS = 'consensus'
 
 class PanelExecutor:
 
-    def __init__(self, registry: ExecutorRegistry, default_timeout: int = 60):
+    def __init__(self, registry: ExecutorRegistry, default_timeout: int=60):
         self._registry = registry
         self._default_timeout = default_timeout
 
-    async def execute(
-        self, panel_config: PanelConfig, inputs: dict[str, Any], phase_config: dict[str, Any] | None = None
-    ) -> dict[str, Any]:
+    async def execute(self, panel_config: PanelConfig, inputs: dict[str, Any], phase_config: dict[str, Any] | None=None) -> dict[str, Any]:
         phase_config = phase_config or {}
         timeout = panel_config.timeout or self._default_timeout
         executors = []
@@ -45,9 +40,9 @@ class PanelExecutor:
                 continue
             executors.append((persona_id, executor))
         if not executors:
-            logger.error("No valid executors found for panel")
+            logger.error('No valid executors found for panel')
             return {}
-        if panel_config.execution == "parallel":
+        if panel_config.execution == 'parallel':
             results = await self._execute_parallel(executors, inputs, phase_config, timeout)
         else:
             results = await self._execute_sequential(executors, inputs, phase_config)
@@ -60,13 +55,7 @@ class PanelExecutor:
         else:
             return self._aggregate_merge(results)
 
-    async def _execute_parallel(
-        self,
-        executors: list[tuple[str, PhaseExecutor]],
-        inputs: dict[str, Any],
-        phase_config: dict[str, Any],
-        timeout: int,
-    ) -> list[tuple[str, dict[str, Any]]]:
+    async def _execute_parallel(self, executors: list[tuple[str, PhaseExecutor]], inputs: dict[str, Any], phase_config: dict[str, Any], timeout: int) -> list[tuple[str, dict[str, Any]]]:
 
         async def run_executor(persona_id: str, executor: PhaseExecutor) -> tuple[str, dict[str, Any]]:
             try:
@@ -75,7 +64,6 @@ class PanelExecutor:
             except Exception as e:
                 logger.warning(f"Panel executor '{persona_id}' failed: {e}")
                 return (persona_id, {})
-
         tasks = [asyncio.create_task(run_executor(pid, ex)) for pid, ex in executors]
         try:
             done, pending = await asyncio.wait(tasks, timeout=timeout, return_when=asyncio.ALL_COMPLETED)
@@ -86,16 +74,14 @@ class PanelExecutor:
                 try:
                     results.append(task.result())
                 except Exception as e:
-                    logger.warning(f"Task result retrieval failed: {e}")
+                    logger.warning(f'Task result retrieval failed: {e}')
             return results
         except asyncio.CancelledError:
             for task in tasks:
                 task.cancel()
             raise
 
-    async def _execute_sequential(
-        self, executors: list[tuple[str, PhaseExecutor]], inputs: dict[str, Any], phase_config: dict[str, Any]
-    ) -> list[tuple[str, dict[str, Any]]]:
+    async def _execute_sequential(self, executors: list[tuple[str, PhaseExecutor]], inputs: dict[str, Any], phase_config: dict[str, Any]) -> list[tuple[str, dict[str, Any]]]:
         results = []
         for persona_id, executor in executors:
             try:
@@ -136,7 +122,6 @@ class PanelExecutor:
 
     def _aggregate_vote(self, results: list[tuple[str, dict[str, Any]]]) -> dict[str, Any]:
         from collections import Counter
-
         all_keys: set[str] = set()
         for _, outputs in results:
             all_keys.update(outputs.keys())
@@ -148,7 +133,7 @@ class PanelExecutor:
                     val = outputs[key]
                     if isinstance(val, (str, int, float, bool, type(None))):
                         values.append(val)
-                    elif hasattr(val, "value"):
+                    elif hasattr(val, 'value'):
                         values.append(val)
             if values:
                 counter = Counter(values)
@@ -158,10 +143,10 @@ class PanelExecutor:
         return voted
 
     def _aggregate_best_score(self, results: list[tuple[str, dict[str, Any]]]) -> dict[str, Any]:
-        best_score = -float("inf")
+        best_score = -float('inf')
         best_outputs: dict[str, Any] = {}
         for persona_id, outputs in results:
-            score = outputs.get("score", outputs.get("confidence", 0))
+            score = outputs.get('score', outputs.get('confidence', 0))
             if isinstance(score, (int, float)) and score > best_score:
                 best_score = score
                 best_outputs = outputs
@@ -199,16 +184,14 @@ class PanelExecutor:
             return tuple(sorted(value.items()))
         elif isinstance(value, list):
             return tuple(value)
-        elif hasattr(value, "id"):
+        elif hasattr(value, 'id'):
             return value.id
-        elif hasattr(value, "__hash__") and value.__hash__ is not None:
+        elif hasattr(value, '__hash__') and value.__hash__ is not None:
             return value
         else:
             return str(value)
 
-    def _aggregate_advanced(
-        self, results: list[tuple[str, dict[str, Any]]], config: AggregationConfig
-    ) -> dict[str, Any]:
+    def _aggregate_advanced(self, results: list[tuple[str, dict[str, Any]]], config: AggregationConfig) -> dict[str, Any]:
         if config.strategy is not None:
             strategy = AggregationStrategy(config.strategy)
             return self._aggregate(results, strategy)
@@ -221,9 +204,7 @@ class PanelExecutor:
         else:
             return self._aggregate_merge(results)
 
-    def _aggregate_weighted(
-        self, results: list[tuple[str, dict[str, Any]]], config: WeightedVoteConfig
-    ) -> dict[str, Any]:
+    def _aggregate_weighted(self, results: list[tuple[str, dict[str, Any]]], config: WeightedVoteConfig) -> dict[str, Any]:
         if not results:
             return {}
         weights = dict(config.weights)
@@ -251,7 +232,6 @@ class PanelExecutor:
                     aggregated[key] = weighted_sum / total_weight
             elif isinstance(sample_value, (str, bool, type(None))):
                 from collections import defaultdict
-
                 vote_weights: defaultdict[Any, float] = defaultdict(float)
                 for value, weight in values_with_weights:
                     vote_weights[value] += weight
@@ -279,27 +259,23 @@ class PanelExecutor:
                 aggregated[key] = best_value
         return aggregated
 
-    def _aggregate_custom(
-        self, results: list[tuple[str, dict[str, Any]]], config: CustomAggregatorConfig
-    ) -> dict[str, Any]:
+    def _aggregate_custom(self, results: list[tuple[str, dict[str, Any]]], config: CustomAggregatorConfig) -> dict[str, Any]:
         try:
             module = importlib.import_module(config.module)
             func = getattr(module, config.function)
             result: dict[str, Any] = func(results, **config.config)
             return result
         except ImportError as e:
-            logger.error(f"Failed to import custom aggregator module: {e}")
+            logger.error(f'Failed to import custom aggregator module: {e}')
             return self._aggregate_merge(results)
         except AttributeError as e:
-            logger.error(f"Custom aggregator function not found: {e}")
+            logger.error(f'Custom aggregator function not found: {e}')
             return self._aggregate_merge(results)
         except Exception as e:
-            logger.error(f"Custom aggregator failed: {e}")
+            logger.error(f'Custom aggregator failed: {e}')
             return self._aggregate_merge(results)
 
-    def _aggregate_per_key(
-        self, results: list[tuple[str, dict[str, Any]]], config: PerKeyAggregationConfig
-    ) -> dict[str, Any]:
+    def _aggregate_per_key(self, results: list[tuple[str, dict[str, Any]]], config: PerKeyAggregationConfig) -> dict[str, Any]:
         if not results:
             return {}
         all_keys: set[str] = set()
@@ -308,9 +284,7 @@ class PanelExecutor:
         aggregated: dict[str, Any] = {}
         for key in all_keys:
             strategy_name = config.overrides.get(key, config.default)
-            key_results = [
-                (persona_id, {key: outputs[key]} if key in outputs else {}) for persona_id, outputs in results
-            ]
+            key_results = [(persona_id, {key: outputs[key]} if key in outputs else {}) for persona_id, outputs in results]
             key_results = [(pid, out) for pid, out in key_results if out]
             if not key_results:
                 continue

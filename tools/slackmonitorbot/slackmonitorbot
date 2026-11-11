@@ -1,0 +1,24 @@
+#!/bin/bash
+# Slack Monitor Bot - Captures Slack messages for Claude Code debugging
+#
+# Usage:
+#   ./slackmonitorbot start              # Start monitoring (writes to slack-monitor.log)
+#   ./slackmonitorbot start --stdout     # Write to stdout instead
+#   ./slackmonitorbot start --timeout 300  # Run for 5 minutes
+#   ./slackmonitorbot status             # Check if monitor is running
+
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+
+# Activate virtual environment if it exists
+if [ -f "$PROJECT_ROOT/venv/bin/activate" ]; then
+    source "$PROJECT_ROOT/venv/bin/activate"
+fi
+
+# Change to project root for config.yaml access
+cd "$PROJECT_ROOT"
+
+# Run the Python module
+python -m tools.slackmonitorbot.slackmonitor "$@"

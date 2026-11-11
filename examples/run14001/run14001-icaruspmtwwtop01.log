@@ -1,0 +1,10 @@
+%MSG-w CAENV1730Readout:  Early 16-Jan-2026 15:24:47 CST pre-events CAENV1730Readout_generator.cc:1144
+(FragID=8192) Missing triggers; current trigger eventCounter=1, previous trigger eventCounter / gap  = 8127715 / 8649502, freeBlockCount=3080, activeBlockCount=0, fullyDrainedCount=0
+%MSG
+%MSG-w CAENV1730Readout:  Early 16-Jan-2026 15:24:47 CST pre-events CAENV1730Readout_generator.cc:1411
+Missing data; current fragment sequenceID=1, previous fragment sequenceID / gap  = 8127715 / 18446744073701423902
+%MSG
+%MSG-e CAENV1730Readout:  Early 16-Jan-2026 15:24:47 CST pre-events CAENV1730Readout_generator.cc:1419
+SequenceIDs processed out of order!! 1 < 8127715
+%MSG
+

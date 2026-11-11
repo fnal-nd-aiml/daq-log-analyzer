@@ -5,7 +5,7 @@ Category: Utility
 Author: artdaq team
 Depends: pydantic
 Exports: ParsedLogSummary, SessionFinding, SessionHypothesis, ToolInvocation, SessionState, ...
-Complexity: High | Lines: 149
+Complexity: Medium | Lines: 151
 """
 
 from __future__ import annotations
@@ -14,15 +14,14 @@ import logging
 import time
 import uuid
 from typing import Any
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, PrivateAttr
 from .errors import session_closed, session_not_found
-
 logger = logging.getLogger(__name__)
 SESSION_TTL_SECONDS = 24 * 60 * 60
 MAX_PARSED_LOGS_PER_SESSION = 5000
 MAX_FINDINGS_PER_SESSION = 500
 MAX_TOOL_HISTORY_PER_SESSION = 1000
-
+MAX_SESSIONS = 1000
 
 class ParsedLogSummary(BaseModel):
     total_entries: int = 0
@@ -32,15 +31,13 @@ class ParsedLogSummary(BaseModel):
     time_range_start: str | None = None
     time_range_end: str | None = None
 
-
 class SessionFinding(BaseModel):
     id: str = Field(default_factory=lambda: uuid.uuid4().hex[:8])
     category: str
     description: str
-    severity: str = "medium"
+    severity: str = 'medium'
     evidence: list[str] = Field(default_factory=list)
     source_tool: str | None = None
-
 
 class SessionHypothesis(BaseModel):
     id: str = Field(default_factory=lambda: uuid.uuid4().hex[:8])
@@ -48,8 +45,7 @@ class SessionHypothesis(BaseModel):
     confidence: float = 0.5
     supporting_evidence: list[str] = Field(default_factory=list)
     contradicting_evidence: list[str] = Field(default_factory=list)
-    status: str = "active"
-
+    status: str = 'active'
 
 class ToolInvocation(BaseModel):
     tool_name: str
@@ -59,7 +55,6 @@ class ToolInvocation(BaseModel):
     error: str | None = None
     summary: str | None = None
 
-
 class SessionState(BaseModel):
     parsed_logs: list[dict[str, Any]] = Field(default_factory=list)
     log_summary: ParsedLogSummary | None = None
@@ -67,15 +62,14 @@ class SessionState(BaseModel):
     hypotheses: list[SessionHypothesis] = Field(default_factory=list)
     investigation_result: dict[str, Any] | None = None
     tool_history: list[ToolInvocation] = Field(default_factory=list)
-
+    _search_cache: dict[str, Any] = PrivateAttr(default_factory=dict)
 
 class SessionMetadata(BaseModel):
     session_id: str
     created_at: float
     last_accessed_at: float
-    status: str = "active"
+    status: str = 'active'
     tool_invocation_count: int = 0
-
 
 class Session(BaseModel):
     metadata: SessionMetadata
@@ -86,14 +80,10 @@ class Session(BaseModel):
 
     def record_tool_invocation(self, invocation: ToolInvocation) -> None:
         if len(self.state.tool_history) >= MAX_TOOL_HISTORY_PER_SESSION:
-            self.state.tool_history = self.state.tool_history[-MAX_TOOL_HISTORY_PER_SESSION // 2 :]
+            self.state.tool_history = self.state.tool_history[-MAX_TOOL_HISTORY_PER_SESSION // 2:]
         self.state.tool_history.append(invocation)
         self.metadata.tool_invocation_count += 1
         self.touch()
-
-    def add_parsed_logs(self, logs: list[dict[str, Any]]) -> None:
-        remaining = MAX_PARSED_LOGS_PER_SESSION - len(self.state.parsed_logs)
-        self.state.parsed_logs.extend(logs[:remaining])
 
     def add_finding(self, finding: SessionFinding) -> None:
         if len(self.state.findings) < MAX_FINDINGS_PER_SESSION:
@@ -101,12 +91,11 @@ class Session(BaseModel):
 
     @property
     def is_closed(self) -> bool:
-        return self.metadata.status == "closed"
+        return self.metadata.status == 'closed'
 
     @property
     def is_expired(self) -> bool:
         return time.time() - self.metadata.last_accessed_at > SESSION_TTL_SECONDS
-
 
 class SessionStore:
 
@@ -120,6 +109,7 @@ class SessionStore:
         session = Session(metadata=SessionMetadata(session_id=session_id, created_at=now, last_accessed_at=now))
         async with self._lock:
             self._reap_expired()
+            self._enforce_capacity()
             self._sessions[session_id] = session
         return session
 
@@ -144,7 +134,7 @@ class SessionStore:
             session = self._sessions.get(session_id)
             if session is None:
                 raise session_not_found(session_id)
-            session.metadata.status = "closed"
+            session.metadata.status = 'closed'
             return session
 
     async def list_sessions(self) -> list[SessionMetadata]:
@@ -156,4 +146,16 @@ class SessionStore:
         expired = [sid for sid, s in self._sessions.items() if s.is_expired]
         for sid in expired:
             del self._sessions[sid]
-            logger.debug("Reaped expired session %s", sid)
+            logger.debug('Reaped expired session %s', sid)
+
+    def _enforce_capacity(self) -> None:
+        if len(self._sessions) < MAX_SESSIONS:
+            return
+        closed = [sid for sid, s in self._sessions.items() if s.is_closed]
+        for sid in closed:
+            del self._sessions[sid]
+            logger.info('Evicted closed session %s to make room', sid)
+        while len(self._sessions) >= MAX_SESSIONS:
+            oldest = min(self._sessions.items(), key=lambda item: item[1].metadata.last_accessed_at)[0]
+            del self._sessions[oldest]
+            logger.warning('Session store at capacity (%d); evicted least-recently-used session %s', MAX_SESSIONS, oldest)

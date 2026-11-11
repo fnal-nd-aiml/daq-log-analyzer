@@ -1,0 +1,25 @@
+%MSG-e CAENV1730Readout:  Early 16-Jan-2026 15:24:47 CST pre-events CAENV1730Readout_generator.cc:1066
+(FragID=8194) Wrong event size; returned=128612, header=160016. PMT_EVENT_COUNTER=8127715, PMT_EVENT_SIZE=40004, PMT_TIME_TAG=15948090. DROPPING THIS FRAGMENT.
+%MSG
+%MSG-w CAENV1730Readout:  Early 16-Jan-2026 15:24:50 CST pre-events CAENV1730Readout_generator.cc:1504
+(FragID=8194) Failed reading CAEN_DGTZ_ACQ_STATUS_ADD register!
+%MSG
+%MSG-e CAENV1730Readout:  Early 16-Jan-2026 15:24:53 CST pre-events CAENV1730Readout_generator.cc:1020
+CAEN_DGTZ_ReadData returned non zero return code; return code=-1
+%MSG
+%MSG-w CAENV1730Readout:  Early 16-Jan-2026 15:24:56 CST pre-events CAENV1730Readout_generator.cc:1551
+CAENV1730 fragID=8194 :  Channel 0 unphysical temperature 39 degrees Celsius. ReadTemperature Return Code = -18
+%MSG
+%MSG-w icaruspmtwwtop03_FragmentBuffer:  Early 16-Jan-2026 15:24:59 CST  pre-events FragmentBuffer.cc:610
+applyRequestsWindowMode_CheckAndFillDataBuffer: A timeout occurred waiting for data to close the request window ({1768598689227608136-1768598689230608136}, buffer={1768598677155309344-1768598687127485424} ). Time waiting: 10000552 us (> 10000000 us).
+%MSG
+%MSG-w icaruspmtwwtop03_FragmentBuffer:  Early 16-Jan-2026 15:24:59 CST  pre-events FragmentBuffer.cc:610
+applyRequestsWindowMode_CheckAndFillDataBuffer: A timeout occurred waiting for data to close the request window ({1768598689260608328-1768598689263608328}, buffer={1768598677155309344-1768598687127485424} ). Time waiting: 10002850 us (> 10000000 us).
+%MSG
+%MSG-e CAENV1730Readout:  Early 16-Jan-2026 15:24:59 CST pre-events CAENV1730Readout_generator.cc:1020
+CAEN_DGTZ_ReadData returned non zero return code; return code=-1
+%MSG
+%MSG-w CAENV1730Readout:  Early 16-Jan-2026 15:25:02 CST pre-events CAENV1730Readout_generator.cc:1573
+(FragID=8194) Failed reading CHANNEL_STATUS register for channel 0
+%MSG
+

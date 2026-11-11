@@ -1,0 +1,8 @@
+from tools.slacktesterbot.slacktester.scenarios.base import BaseScenario, TestCase
+
+class FeedbackScenario(BaseScenario):
+    name = 'feedback'
+    description = 'Feedback command parsing'
+
+    def get_test_cases(self) -> list[TestCase]:
+        return [TestCase(name='feedback_correct', command='feedback inv_abc123 correct', expected={'error': False, 'parse_result': {'investigation_id': 'inv_abc123', 'correct': True, 'actual_cause': None}}, description='Feedback marking investigation as correct'), TestCase(name='feedback_incorrect', command='feedback inv_xyz789 incorrect', expected={'error': False, 'parse_result': {'investigation_id': 'inv_xyz789', 'correct': False, 'actual_cause': None}}, description='Feedback marking investigation as incorrect'), TestCase(name='feedback_with_cause', command='feedback inv_def456 incorrect "Actually caused by network timeout"', expected={'error': False, 'parse_result': {'investigation_id': 'inv_def456', 'correct': False, 'actual_cause': 'Actually caused by network timeout'}}, description='Feedback with actual cause explanation'), TestCase(name='feedback_missing_args', command='feedback', expected={'error': False, 'parse_result': None}, description='Feedback without arguments returns None'), TestCase(name='feedback_missing_correctness', command='feedback inv_123', expected={'error': False, 'parse_result': None}, description='Feedback without correct/incorrect returns None')]

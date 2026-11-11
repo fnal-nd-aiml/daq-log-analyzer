@@ -5,7 +5,7 @@ Category: Utility
 Author: artdaq team
 Depends: pydantic
 Exports: FastPathAction, FilterConfig, WeightedVoteConfig, CustomAggregatorConfig, PerKeyAggregationConfig, ...
-Complexity: High | Lines: 229
+Complexity: High | Lines: 212
 """
 
 from __future__ import annotations
@@ -13,42 +13,38 @@ from enum import Enum
 from typing import Any
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-
 class FastPathAction(str, Enum):
-    SKIP_TO = "skip_to"
-    EARLY_RETURN = "early_return"
-    USE_VARIANT = "use_variant"
-
+    SKIP_TO = 'skip_to'
+    EARLY_RETURN = 'early_return'
+    USE_VARIANT = 'use_variant'
 
 class FilterConfig(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra='forbid')
     field: str
     condition: str | None = None
     limit: int | None = None
 
-
 class WeightedVoteConfig(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra='forbid')
     weights: dict[str, float]
     normalize: bool = True
 
-    @model_validator(mode="after")
+    @model_validator(mode='after')
     def validate_weights(self) -> WeightedVoteConfig:
         for persona_id, weight in self.weights.items():
             if weight < 0.0:
                 raise ValueError(f"Weight for persona '{persona_id}' must be >= 0.0, got {weight}")
         return self
 
-
 class CustomAggregatorConfig(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra='forbid')
     module: str
     function: str
     config: dict[str, Any] = Field(default_factory=dict)
 
-    @model_validator(mode="after")
+    @model_validator(mode='after')
     def validate_module_path(self) -> CustomAggregatorConfig:
-        parts = self.module.split(".")
+        parts = self.module.split('.')
         for part in parts:
             if not part.isidentifier():
                 raise ValueError(f"Invalid module path: '{self.module}'")
@@ -56,40 +52,34 @@ class CustomAggregatorConfig(BaseModel):
             raise ValueError(f"Invalid function name: '{self.function}'")
         return self
 
-
 class PerKeyAggregationConfig(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-    default: str = "merge"
+    model_config = ConfigDict(extra='forbid')
+    default: str = 'merge'
     overrides: dict[str, str] = Field(default_factory=dict)
 
-
 class AggregationConfig(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra='forbid')
     strategy: str | None = None
     weighted: WeightedVoteConfig | None = None
     custom: CustomAggregatorConfig | None = None
     per_key: PerKeyAggregationConfig | None = None
 
-    @model_validator(mode="after")
+    @model_validator(mode='after')
     def validate_single_mode(self) -> AggregationConfig:
-        modes = sum(
-            [self.strategy is not None, self.weighted is not None, self.custom is not None, self.per_key is not None]
-        )
+        modes = sum([self.strategy is not None, self.weighted is not None, self.custom is not None, self.per_key is not None])
         if modes != 1:
-            raise ValueError("AggregationConfig must specify exactly one of: strategy, weighted, custom, or per_key")
+            raise ValueError('AggregationConfig must specify exactly one of: strategy, weighted, custom, or per_key')
         return self
 
-
 class PanelConfig(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra='forbid')
     personas: list[str]
-    execution: str = "sequential"
-    aggregation: str | AggregationConfig = "merge"
+    execution: str = 'sequential'
+    aggregation: str | AggregationConfig = 'merge'
     timeout: int = 60
 
-
 class PhaseConfig(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra='forbid')
     id: str
     executor: str | None = None
     panel: PanelConfig | None = None
@@ -100,24 +90,22 @@ class PhaseConfig(BaseModel):
     enabled: str | bool = True
     requires: str | None = None
 
-    @model_validator(mode="after")
-    def validate_executor_or_panel(self) -> "PhaseConfig":
+    @model_validator(mode='after')
+    def validate_executor_or_panel(self) -> 'PhaseConfig':
         if self.executor is None and self.panel is None:
             raise ValueError(f"Phase '{self.id}' must specify either 'executor' or 'panel'")
         if self.executor is not None and self.panel is not None:
             raise ValueError(f"Phase '{self.id}' cannot specify both 'executor' and 'panel'")
         return self
 
-
 class BranchConfig(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra='forbid')
     after: str
     condition: str
     skip_to: str
 
-
 class FastPathConfig(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra='forbid')
     name: str
     after: str | None = None
     condition: str
@@ -126,8 +114,8 @@ class FastPathConfig(BaseModel):
     result_builder: str | None = None
     variant: str | None = None
 
-    @model_validator(mode="after")
-    def validate_action_fields(self) -> "FastPathConfig":
+    @model_validator(mode='after')
+    def validate_action_fields(self) -> 'FastPathConfig':
         if self.action == FastPathAction.SKIP_TO and (not self.skip_to):
             raise ValueError(f"Fast path '{self.name}' with action=skip_to requires 'skip_to' field")
         if self.action == FastPathAction.EARLY_RETURN and (not self.result_builder):
@@ -136,56 +124,51 @@ class FastPathConfig(BaseModel):
             raise ValueError(f"Fast path '{self.name}' with action=use_variant requires 'variant' field")
         return self
 
-
 class PhaseOverrideConfig(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra='forbid')
     config: dict[str, Any] | None = None
     enabled: bool | None = None
 
-
 class VariantConfig(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra='forbid')
     phase_overrides: dict[str, PhaseOverrideConfig] = Field(default_factory=dict)
 
-
 class HookConfig(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra='forbid')
     after: str | None = None
     before: str | None = None
     on_error: bool = False
     on_complete: bool = False
     action: str
 
-    @model_validator(mode="after")
-    def validate_trigger(self) -> "HookConfig":
+    @model_validator(mode='after')
+    def validate_trigger(self) -> 'HookConfig':
         triggers = sum([self.after is not None, self.before is not None, self.on_error, self.on_complete])
         if triggers != 1:
-            raise ValueError("Hook must specify exactly one of: after, before, on_error, on_complete")
+            raise ValueError('Hook must specify exactly one of: after, before, on_error, on_complete')
         return self
 
-
 class ExecutorPluginConfig(BaseModel):
-    model_config = ConfigDict(extra="forbid", populate_by_name=True)
+    model_config = ConfigDict(extra='forbid', populate_by_name=True)
     id: str
     module: str
-    class_name: str = Field(alias="class")
+    class_name: str = Field(alias='class')
     config: dict[str, Any] = Field(default_factory=dict)
 
-    @model_validator(mode="after")
+    @model_validator(mode='after')
     def validate_module_path(self) -> ExecutorPluginConfig:
         if not self.module:
             raise ValueError(f"Plugin '{self.id}' requires a module path")
         if not self.class_name:
             raise ValueError(f"Plugin '{self.id}' requires a class name")
-        parts = self.module.split(".")
+        parts = self.module.split('.')
         for part in parts:
             if not part.isidentifier():
                 raise ValueError(f"Plugin '{self.id}' has invalid module path: '{self.module}'")
         return self
 
-
 class PipelineConfig(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra='forbid')
     start_at: str | None = None
     skip_phases: list[str] = Field(default_factory=list)
     phases: list[PhaseConfig]
@@ -195,8 +178,8 @@ class PipelineConfig(BaseModel):
     hooks: list[HookConfig] = Field(default_factory=list)
     executors: list[ExecutorPluginConfig] = Field(default_factory=list)
 
-    @model_validator(mode="after")
-    def validate_phase_references(self) -> "PipelineConfig":
+    @model_validator(mode='after')
+    def validate_phase_references(self) -> 'PipelineConfig':
         phase_ids = {p.id for p in self.phases}
         if self.start_at and self.start_at not in phase_ids:
             raise ValueError(f"start_at references unknown phase '{self.start_at}'")

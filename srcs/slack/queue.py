@@ -5,16 +5,14 @@ Category: Utility
 Author: artdaq team
 Depends: None
 Exports: QueuedTask, TaskQueue
-Complexity: Low | Lines: 51
+Complexity: Low | Lines: 48
 """
 
 import asyncio
 import logging
 from dataclasses import dataclass
 from typing import Any, Coroutine
-
 logger = logging.getLogger(__name__)
-
 
 @dataclass
 class QueuedTask:
@@ -24,10 +22,9 @@ class QueuedTask:
     coro: Coroutine[Any, Any, None]
     ack_message_ts: str | None = None
 
-
 class TaskQueue:
 
-    def __init__(self, max_depth: int = 3):
+    def __init__(self, max_depth: int=3):
         self.max_depth = max_depth
         self._queue: asyncio.Queue[QueuedTask] = asyncio.Queue(maxsize=max_depth)
         self._worker_task: asyncio.Task[None] | None = None
@@ -53,9 +50,9 @@ class TaskQueue:
         while not self._queue.empty():
             task = await self._queue.get()
             try:
-                logger.debug(f"Processing queued task: {task.command} for user {task.user}")
+                logger.debug(f'Processing queued task: {task.command} for user {task.user}')
                 await task.coro
             except Exception as e:
-                logger.exception(f"Error processing queued task {task.command}: {e}")
+                logger.exception(f'Error processing queued task {task.command}: {e}')
             finally:
                 self._queue.task_done()

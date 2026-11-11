@@ -5,12 +5,11 @@ Category: Data
 Author: artdaq team
 Depends: None
 Exports: PhaseEvent, LLMEvent, DataRetrievalEvent
-Complexity: Low | Lines: 43
+Complexity: Low | Lines: 36
 """
 
 from dataclasses import dataclass, field
 from typing import Any, Callable
-
 
 @dataclass
 class PhaseEvent:
@@ -19,10 +18,7 @@ class PhaseEvent:
     event_type: str
     data: dict[str, Any] = field(default_factory=dict)
     message: str | None = None
-
-
 InvestigationCallback = Callable[[PhaseEvent], None]
-
 
 @dataclass
 class LLMEvent:
@@ -37,7 +33,6 @@ class LLMEvent:
     parse_error: str | None = None
     expected_schema: str | None = None
 
-
 @dataclass
 class DataRetrievalEvent:
     phase: int
@@ -47,7 +42,5 @@ class DataRetrievalEvent:
     query_params: dict[str, Any] = field(default_factory=dict)
     result_summary: str | None = None
     result_count: int | None = None
-
-
 LLMCallback = Callable[[LLMEvent], None]
 DataRetrievalCallback = Callable[[DataRetrievalEvent], None]

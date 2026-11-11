@@ -3,17 +3,17 @@
 # Slack credentials (for live mode testing)
 slack:
   # Bot token (xoxb-...) - OAuth token with channels:history, channels:read scopes
-  bot_token: xoxb-secret-token
+  bot_token: null  # set SLACK_TESTER_BOT_TOKEN in .env.slack
 
   # App token (xapp-...) - Socket Mode token with connections:write scope
-  app_token: xapp-1-xapp-1-secret-token
+  app_token: null  # set SLACK_TESTER_APP_TOKEN in .env.slack
 
   # Channel for testing (can be name or ID)
-  channel: C00000000
+  channel: C08827X3MSN
 
   # Target bot being tested
   target_bot: LogAnalyzer Bot
-  target_bot_id: U000000000
+  target_bot_id: U0ABYV0N545
 
 scenarios:
   enabled:

@@ -5,7 +5,7 @@ Category: Utility
 Author: artdaq team
 Depends: models
 Exports: QualityLevel, EvidenceMetrics, HypothesisMetrics, ChainMetrics, InvestigationQualityReport, ...
-Complexity: Medium | Lines: 295
+Complexity: Medium | Lines: 212
 """
 
 from __future__ import annotations
@@ -13,17 +13,14 @@ import logging
 from dataclasses import dataclass, field
 from enum import Enum
 from srcs.models import CausalChain, Evidence, Hypothesis, Investigation, InvestigationOutcome
-
 logger = logging.getLogger(__name__)
 
-
 class QualityLevel(str, Enum):
-    EXCELLENT = "EXCELLENT"
-    GOOD = "GOOD"
-    ADEQUATE = "ADEQUATE"
-    POOR = "POOR"
-    INSUFFICIENT = "INSUFFICIENT"
-
+    EXCELLENT = 'EXCELLENT'
+    GOOD = 'GOOD'
+    ADEQUATE = 'ADEQUATE'
+    POOR = 'POOR'
+    INSUFFICIENT = 'INSUFFICIENT'
 
 @dataclass
 class EvidenceMetrics:
@@ -37,7 +34,6 @@ class EvidenceMetrics:
     log_evidence: int = 0
     coverage_score: float = 0.0
 
-
 @dataclass
 class HypothesisMetrics:
     total_hypotheses: int = 0
@@ -48,7 +44,6 @@ class HypothesisMetrics:
     discrimination_ratio: float = 0.0
     convergence_score: float = 0.0
 
-
 @dataclass
 class ChainMetrics:
     total_steps: int = 0
@@ -57,7 +52,6 @@ class ChainMetrics:
     logical_validity: float = 0.0
     evidence_coverage: float = 0.0
     gap_count: int = 0
-
 
 @dataclass
 class InvestigationQualityReport:
@@ -73,22 +67,9 @@ class InvestigationQualityReport:
     quality_issues: list[str] = field(default_factory=list)
     recommendations: list[str] = field(default_factory=list)
 
-
 class QualityAnalyzer:
-    THRESHOLDS = {
-        QualityLevel.EXCELLENT: 0.85,
-        QualityLevel.GOOD: 0.7,
-        QualityLevel.ADEQUATE: 0.5,
-        QualityLevel.POOR: 0.3,
-    }
-    WEIGHTS = {
-        "evidence_coverage": 0.25,
-        "evidence_strength": 0.15,
-        "hypothesis_discrimination": 0.2,
-        "chain_quality": 0.2,
-        "challenge_resolution": 0.1,
-        "outcome_confidence": 0.1,
-    }
+    THRESHOLDS = {QualityLevel.EXCELLENT: 0.85, QualityLevel.GOOD: 0.7, QualityLevel.ADEQUATE: 0.5, QualityLevel.POOR: 0.3}
+    WEIGHTS = {'evidence_coverage': 0.25, 'evidence_strength': 0.15, 'hypothesis_discrimination': 0.2, 'chain_quality': 0.2, 'challenge_resolution': 0.1, 'outcome_confidence': 0.1}
 
     def analyze(self, investigation: Investigation) -> InvestigationQualityReport:
         evidence_metrics = self._analyze_evidence(investigation.evidence)
@@ -96,45 +77,27 @@ class QualityAnalyzer:
         chain_metrics = self._analyze_chain(investigation.causal_chains[0]) if investigation.causal_chains else None
         total_challenges = len(investigation.challenges)
         unresolved = sum((1 for c in investigation.challenges if c.requires_response and (not c.resolved)))
-        overall_score = self._calculate_overall_score(
-            evidence_metrics, hypothesis_metrics, chain_metrics, investigation
-        )
+        overall_score = self._calculate_overall_score(evidence_metrics, hypothesis_metrics, chain_metrics, investigation)
         quality_level = self._determine_quality_level(overall_score)
-        issues, recommendations = self._generate_recommendations(
-            evidence_metrics, hypothesis_metrics, chain_metrics, investigation
-        )
-        return InvestigationQualityReport(
-            investigation_id=investigation.id,
-            outcome=investigation.outcome,
-            quality_level=quality_level,
-            overall_score=overall_score,
-            evidence_metrics=evidence_metrics,
-            hypothesis_metrics=hypothesis_metrics,
-            chain_metrics=chain_metrics,
-            unresolved_challenges=unresolved,
-            total_challenges=total_challenges,
-            quality_issues=issues,
-            recommendations=recommendations,
-        )
+        issues, recommendations = self._generate_recommendations(evidence_metrics, hypothesis_metrics, chain_metrics, investigation)
+        return InvestigationQualityReport(investigation_id=investigation.id, outcome=investigation.outcome, quality_level=quality_level, overall_score=overall_score, evidence_metrics=evidence_metrics, hypothesis_metrics=hypothesis_metrics, chain_metrics=chain_metrics, unresolved_challenges=unresolved, total_challenges=total_challenges, quality_issues=issues, recommendations=recommendations)
 
     def _analyze_evidence(self, evidence: Evidence) -> EvidenceMetrics:
         metrics = EvidenceMetrics()
         metrics.total_items = len(evidence.items)
         for item in evidence.items.values():
-            if item.strength == "STRONG":
+            if item.strength == 'STRONG':
                 metrics.strong_items += 1
-            elif item.strength == "MODERATE":
+            elif item.strength == 'MODERATE':
                 metrics.moderate_items += 1
             else:
                 metrics.weak_items += 1
-            if item.evidence_type == "code":
+            if item.evidence_type == 'code':
                 metrics.code_evidence += 1
-            elif item.evidence_type == "log":
+            elif item.evidence_type == 'log':
                 metrics.log_evidence += 1
         if metrics.total_items > 0:
-            strength_score = (
-                metrics.strong_items * 1.0 + metrics.moderate_items * 0.6 + metrics.weak_items * 0.3
-            ) / metrics.total_items
+            strength_score = (metrics.strong_items * 1.0 + metrics.moderate_items * 0.6 + metrics.weak_items * 0.3) / metrics.total_items
             diversity_bonus = 0.0
             if metrics.code_evidence > 0 and metrics.log_evidence > 0:
                 diversity_bonus = 0.1
@@ -147,9 +110,9 @@ class QualityAnalyzer:
         if not hypotheses:
             return metrics
         for h in hypotheses:
-            if h.status == "active":
+            if h.status == 'active':
                 metrics.active_hypotheses += 1
-            elif h.status == "rejected":
+            elif h.status == 'rejected':
                 metrics.rejected_hypotheses += 1
         sorted_hyps = sorted(hypotheses, key=lambda h: h.score, reverse=True)
         metrics.top_score = sorted_hyps[0].score
@@ -177,37 +140,27 @@ class QualityAnalyzer:
         metrics.gap_count = len(chain.gaps)
         return metrics
 
-    def _calculate_overall_score(
-        self,
-        evidence: EvidenceMetrics,
-        hypotheses: HypothesisMetrics,
-        chain: ChainMetrics | None,
-        investigation: Investigation,
-    ) -> float:
+    def _calculate_overall_score(self, evidence: EvidenceMetrics, hypotheses: HypothesisMetrics, chain: ChainMetrics | None, investigation: Investigation) -> float:
         scores = {}
-        scores["evidence_coverage"] = evidence.coverage_score
+        scores['evidence_coverage'] = evidence.coverage_score
         if evidence.total_items > 0:
-            scores["evidence_strength"] = (
-                evidence.strong_items * 1.0 + evidence.moderate_items * 0.5
-            ) / evidence.total_items
+            scores['evidence_strength'] = (evidence.strong_items * 1.0 + evidence.moderate_items * 0.5) / evidence.total_items
         else:
-            scores["evidence_strength"] = 0.0
-        scores["hypothesis_discrimination"] = min(
-            1.0, hypotheses.discrimination_ratio / 2.0 + (0.3 if hypotheses.top_score > 0.5 else 0)
-        )
+            scores['evidence_strength'] = 0.0
+        scores['hypothesis_discrimination'] = min(1.0, hypotheses.discrimination_ratio / 2.0 + (0.3 if hypotheses.top_score > 0.5 else 0))
         if chain:
-            scores["chain_quality"] = chain.logical_validity * 0.5 + chain.evidence_coverage * 0.5
+            scores['chain_quality'] = chain.logical_validity * 0.5 + chain.evidence_coverage * 0.5
         else:
-            scores["chain_quality"] = 0.0
+            scores['chain_quality'] = 0.0
         if investigation.challenges:
             resolved = sum((1 for c in investigation.challenges if c.resolved))
-            scores["challenge_resolution"] = resolved / len(investigation.challenges)
+            scores['challenge_resolution'] = resolved / len(investigation.challenges)
         else:
-            scores["challenge_resolution"] = 1.0
+            scores['challenge_resolution'] = 1.0
         if investigation.outcome in [InvestigationOutcome.CONFIDENT, InvestigationOutcome.PROBABLE]:
-            scores["outcome_confidence"] = hypotheses.top_score
+            scores['outcome_confidence'] = hypotheses.top_score
         else:
-            scores["outcome_confidence"] = 0.3
+            scores['outcome_confidence'] = 0.3
         total_score = sum((scores[key] * weight for key, weight in self.WEIGHTS.items()))
         return min(1.0, total_score)
 
@@ -223,83 +176,47 @@ class QualityAnalyzer:
         else:
             return QualityLevel.INSUFFICIENT
 
-    def _generate_recommendations(
-        self,
-        evidence: EvidenceMetrics,
-        hypotheses: HypothesisMetrics,
-        chain: ChainMetrics | None,
-        investigation: Investigation,
-    ) -> tuple[list[str], list[str]]:
+    def _generate_recommendations(self, evidence: EvidenceMetrics, hypotheses: HypothesisMetrics, chain: ChainMetrics | None, investigation: Investigation) -> tuple[list[str], list[str]]:
         issues = []
         recommendations = []
         if evidence.total_items == 0:
-            issues.append("No evidence collected")
-            recommendations.append("Add evidence seeking phase or expand log context")
+            issues.append('No evidence collected')
+            recommendations.append('Add evidence seeking phase or expand log context')
         elif evidence.strong_items == 0:
-            issues.append("No strong evidence found")
-            recommendations.append("Look for more definitive evidence sources")
+            issues.append('No strong evidence found')
+            recommendations.append('Look for more definitive evidence sources')
         if evidence.code_evidence == 0 and evidence.log_evidence > 0:
-            recommendations.append("Consider adding code analysis for deeper insight")
+            recommendations.append('Consider adding code analysis for deeper insight')
         if hypotheses.total_hypotheses == 0:
-            issues.append("No hypotheses generated")
+            issues.append('No hypotheses generated')
         elif hypotheses.discrimination_ratio < 0.3:
-            issues.append("Poor hypothesis discrimination")
-            recommendations.append("Seek evidence that distinguishes between top hypotheses")
+            issues.append('Poor hypothesis discrimination')
+            recommendations.append('Seek evidence that distinguishes between top hypotheses')
         if hypotheses.top_score < 0.5:
-            issues.append("Low confidence in top hypothesis")
+            issues.append('Low confidence in top hypothesis')
         if chain:
             if chain.assumption_steps > chain.total_steps / 2:
-                issues.append("Causal chain has too many assumptions")
-                recommendations.append("Find evidence to support assumed steps")
+                issues.append('Causal chain has too many assumptions')
+                recommendations.append('Find evidence to support assumed steps')
             if chain.gap_count > 2:
-                issues.append(f"Causal chain has {chain.gap_count} gaps")
+                issues.append(f'Causal chain has {chain.gap_count} gaps')
         unresolved = sum((1 for c in investigation.challenges if c.requires_response and (not c.resolved)))
         if unresolved > 0:
-            issues.append(f"{unresolved} unresolved challenges")
-            recommendations.append("Address challenges before finalizing conclusion")
+            issues.append(f'{unresolved} unresolved challenges')
+            recommendations.append('Address challenges before finalizing conclusion')
         return (issues, recommendations)
 
-
 def format_quality_report(report: InvestigationQualityReport) -> str:
-    lines = [
-        f"Investigation Quality Report: {report.investigation_id}",
-        "=" * 50,
-        "",
-        f"Outcome: {(report.outcome.value if report.outcome else 'N/A')}",
-        f"Quality Level: {report.quality_level.value}",
-        f"Overall Score: {report.overall_score:.0%}",
-        "",
-        "Evidence Metrics:",
-        f"  - Total items: {report.evidence_metrics.total_items}",
-        f"  - Strong: {report.evidence_metrics.strong_items}",
-        f"  - Moderate: {report.evidence_metrics.moderate_items}",
-        f"  - Weak: {report.evidence_metrics.weak_items}",
-        f"  - Coverage score: {report.evidence_metrics.coverage_score:.0%}",
-        "",
-        "Hypothesis Metrics:",
-        f"  - Total: {report.hypothesis_metrics.total_hypotheses}",
-        f"  - Top score: {report.hypothesis_metrics.top_score:.0%}",
-        f"  - Discrimination: {report.hypothesis_metrics.discrimination_ratio:.2f}",
-        "",
-    ]
+    lines = [f'Investigation Quality Report: {report.investigation_id}', '=' * 50, '', f"Outcome: {(report.outcome.value if report.outcome else 'N/A')}", f'Quality Level: {report.quality_level.value}', f'Overall Score: {report.overall_score:.0%}', '', 'Evidence Metrics:', f'  - Total items: {report.evidence_metrics.total_items}', f'  - Strong: {report.evidence_metrics.strong_items}', f'  - Moderate: {report.evidence_metrics.moderate_items}', f'  - Weak: {report.evidence_metrics.weak_items}', f'  - Coverage score: {report.evidence_metrics.coverage_score:.0%}', '', 'Hypothesis Metrics:', f'  - Total: {report.hypothesis_metrics.total_hypotheses}', f'  - Top score: {report.hypothesis_metrics.top_score:.0%}', f'  - Discrimination: {report.hypothesis_metrics.discrimination_ratio:.2f}', '']
     if report.chain_metrics:
-        lines.extend(
-            [
-                "Causal Chain:",
-                f"  - Steps: {report.chain_metrics.total_steps}",
-                f"  - Evidenced: {report.chain_metrics.evidenced_steps}",
-                f"  - Assumptions: {report.chain_metrics.assumption_steps}",
-                f"  - Validity: {report.chain_metrics.logical_validity:.0%}",
-                "",
-            ]
-        )
-    lines.append(f"Challenges: {report.unresolved_challenges}/{report.total_challenges} unresolved")
+        lines.extend(['Causal Chain:', f'  - Steps: {report.chain_metrics.total_steps}', f'  - Evidenced: {report.chain_metrics.evidenced_steps}', f'  - Assumptions: {report.chain_metrics.assumption_steps}', f'  - Validity: {report.chain_metrics.logical_validity:.0%}', ''])
+    lines.append(f'Challenges: {report.unresolved_challenges}/{report.total_challenges} unresolved')
     if report.quality_issues:
-        lines.extend(["", "Issues:"])
+        lines.extend(['', 'Issues:'])
         for issue in report.quality_issues:
-            lines.append(f"  - {issue}")
+            lines.append(f'  - {issue}')
     if report.recommendations:
-        lines.extend(["", "Recommendations:"])
+        lines.extend(['', 'Recommendations:'])
         for rec in report.recommendations:
-            lines.append(f"  - {rec}")
-    return "\n".join(lines)
+            lines.append(f'  - {rec}')
+    return '\n'.join(lines)

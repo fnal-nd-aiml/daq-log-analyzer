@@ -5,9 +5,8 @@ Category: Config
 Author: artdaq team
 Depends: None
 Exports: None
-Complexity: Low | Lines: 3
+Complexity: Low | Lines: 2
 """
 
 from . import admin, agent, calibration, health, investigations, metrics, patterns
-
-__all__ = ["admin", "agent", "calibration", "health", "investigations", "metrics", "patterns"]
+__all__ = ['admin', 'agent', 'calibration', 'health', 'investigations', 'metrics', 'patterns']

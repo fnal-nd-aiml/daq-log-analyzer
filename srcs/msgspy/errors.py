@@ -5,16 +5,14 @@ Category: Utility
 Author: artdaq team
 Depends: None
 Exports: MsgSpyError, SocketError, ParseError
-Complexity: Low | Lines: 10
+Complexity: Low | Lines: 8
 """
 
 class MsgSpyError(Exception):
     pass
 
-
 class SocketError(MsgSpyError):
     pass
-
 
 class ParseError(MsgSpyError):
     pass

@@ -5,7 +5,7 @@ Category: Config
 Author: artdaq team
 Depends: None
 Exports: None
-Complexity: Low | Lines: 17
+Complexity: Low | Lines: 8
 """
 
 from .archivist_tools import ArchivistTools
@@ -15,13 +15,4 @@ from .extraction_tools import ExtractionTools
 from .forensics_tools import CodeForensicsTools
 from .investigation_tools import InvestigationTools
 from .pattern_tools import PatternTools
-
-__all__ = [
-    "ArchivistTools",
-    "CodeForensicsTools",
-    "CodeTools",
-    "ConfigurationTools",
-    "ExtractionTools",
-    "InvestigationTools",
-    "PatternTools",
-]
+__all__ = ['ArchivistTools', 'CodeForensicsTools', 'CodeTools', 'ConfigurationTools', 'ExtractionTools', 'InvestigationTools', 'PatternTools']

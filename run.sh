@@ -50,7 +50,7 @@ fi
 
 source "${VENV_DIR}/bin/activate"
 
-if [ $
+if [ $# -eq 0 ]; then
     show_help
     exit 0
 fi
@@ -63,7 +63,7 @@ case $COMMAND in
         PORT=8000
         RELOAD=""
 
-        while [[ $
+        while [[ $# -gt 0 ]]; do
             case $1 in
                 --port|-p)
                     PORT=$2

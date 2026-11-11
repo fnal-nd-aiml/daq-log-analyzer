@@ -5,37 +5,32 @@ Category: Utility
 Author: artdaq team
 Depends: pydantic
 Exports: ModelTier, AnthropicModels, AnthropicProviderConfig, OpenRouterModels, OpenRouterProviderConfig, ...
-Complexity: Medium | Lines: 147
+Complexity: Medium | Lines: 144
 """
 
+import asyncio
+import os
 from abc import ABC, abstractmethod
+from collections.abc import Awaitable, Callable
 from enum import Enum
 from typing import TypeVar
-from pydantic import BaseModel, model_validator
-
+from pydantic import BaseModel, Field, model_validator
 
 class ModelTier(str, Enum):
-    DEFAULT = "default"
-    SMALL_FAST = "small_fast"
-    HAIKU = "haiku"
-    OPUS = "opus"
-
+    DEFAULT = 'default'
+    SMALL_FAST = 'small_fast'
+    HAIKU = 'haiku'
+    OPUS = 'opus'
 
 class AnthropicModels(BaseModel):
-    default: str = "claude-3-5-sonnet-20241022"
+    default: str = 'claude-3-5-sonnet-20241022'
     small_fast: str | None = None
     haiku: str | None = None
     opus: str | None = None
 
-    def get_model(self, tier: ModelTier = ModelTier.DEFAULT) -> str:
-        model_map = {
-            ModelTier.DEFAULT: self.default,
-            ModelTier.SMALL_FAST: self.small_fast,
-            ModelTier.HAIKU: self.haiku,
-            ModelTier.OPUS: self.opus,
-        }
+    def get_model(self, tier: ModelTier=ModelTier.DEFAULT) -> str:
+        model_map = {ModelTier.DEFAULT: self.default, ModelTier.SMALL_FAST: self.small_fast, ModelTier.HAIKU: self.haiku, ModelTier.OPUS: self.opus}
         return model_map.get(tier) or self.default
-
 
 class AnthropicProviderConfig(BaseModel):
     base_url: str | None = None
@@ -43,109 +38,111 @@ class AnthropicProviderConfig(BaseModel):
     api_key: str | None = None
     models: AnthropicModels = AnthropicModels()
 
-
 class OpenRouterModels(BaseModel):
-    default: str = "anthropic/claude-3.5-sonnet"
+    default: str = 'anthropic/claude-3.5-sonnet'
     small_fast: str | None = None
     haiku: str | None = None
     opus: str | None = None
 
-    def get_model(self, tier: ModelTier = ModelTier.DEFAULT) -> str:
-        model_map = {
-            ModelTier.DEFAULT: self.default,
-            ModelTier.SMALL_FAST: self.small_fast,
-            ModelTier.HAIKU: self.haiku,
-            ModelTier.OPUS: self.opus,
-        }
+    def get_model(self, tier: ModelTier=ModelTier.DEFAULT) -> str:
+        model_map = {ModelTier.DEFAULT: self.default, ModelTier.SMALL_FAST: self.small_fast, ModelTier.HAIKU: self.haiku, ModelTier.OPUS: self.opus}
         return model_map.get(tier) or self.default
 
-
 class OpenRouterProviderConfig(BaseModel):
-    base_url: str = "https://openrouter.ai/api/v1"
+    base_url: str = 'https://openrouter.ai/api/v1'
     api_key: str | None = None
     models: OpenRouterModels = OpenRouterModels()
-
+    reasoning_effort: str | None = None
 
 class OllamaProviderConfig(BaseModel):
-    host: str = "http://localhost:11434"
-    model: str = "gpt-oss:120b"
-
+    host: str = 'http://localhost:11434'
+    model: str = 'gpt-oss:120b'
 
 class EmbeddingConfig(BaseModel):
-    provider: str = "ollama"
-    model: str = "nomic-embed-text"
-    host: str = "http://localhost:11434"
-
+    provider: str = 'ollama'
+    model: str = 'nomic-embed-text'
+    host: str = 'http://localhost:11434'
+    api_key: str | None = None
 
 class ProvidersConfig(BaseModel):
     ollama: OllamaProviderConfig = OllamaProviderConfig()
     anthropic: AnthropicProviderConfig = AnthropicProviderConfig()
     openrouter: OpenRouterProviderConfig = OpenRouterProviderConfig()
 
-
 class LLMConfig(BaseModel):
-    provider: str = "ollama"
+    provider: str = 'ollama'
     temperature: float = 0.1
     max_tokens: int = 4096
     embedding: EmbeddingConfig = EmbeddingConfig()
     providers: ProvidersConfig = ProvidersConfig()
+    timeout_seconds: float = Field(default=300.0, ge=0)
+    embedding_timeout_seconds: float = Field(default=60.0, ge=0)
+    max_retries: int = Field(default=2, ge=0, le=10)
+    retry_base_delay: float = Field(default=1.0, gt=0)
+    retry_max_delay: float = Field(default=30.0, gt=0)
+    embedding_concurrency: int = Field(default=8, ge=1, le=64)
     model: str | None = None
     embedding_model: str | None = None
     ollama_host: str | None = None
     anthropic_api_key: str | None = None
 
-    @model_validator(mode="after")
-    def migrate_legacy_fields(self) -> "LLMConfig":
+    @model_validator(mode='after')
+    def migrate_legacy_fields(self) -> 'LLMConfig':
         if self.ollama_host:
             self.providers.ollama.host = self.ollama_host
-            self.embedding.host = self.ollama_host
+            if self.embedding.provider == 'ollama':
+                self.embedding.host = self.ollama_host
         if self.model:
             self.providers.ollama.model = self.model
         if self.embedding_model:
             self.embedding.model = self.embedding_model
         if self.anthropic_api_key:
             self.providers.anthropic.api_key = self.anthropic_api_key
+        if not self.providers.openrouter.api_key:
+            self.providers.openrouter.api_key = os.environ.get('ARTDAQ_OPENROUTER_API_KEY')
         return self
 
     def get_model(self) -> str:
-        if self.provider == "ollama":
+        if self.provider == 'ollama':
             return self.providers.ollama.model
-        elif self.provider == "anthropic":
+        elif self.provider == 'anthropic':
             return self.providers.anthropic.models.default
-        elif self.provider == "openrouter":
+        elif self.provider == 'openrouter':
             return self.providers.openrouter.models.default
-        return self.model or "gpt-oss:120b"
+        return self.model or 'gpt-oss:120b'
 
     def get_embedding_model(self) -> str:
         return self.embedding.model
 
     def get_ollama_host(self) -> str:
         return self.embedding.host
-
-
-T = TypeVar("T", bound=BaseModel)
-
+T = TypeVar('T', bound=BaseModel)
+R = TypeVar('R')
 
 class LLMProvider(ABC):
+    provider_name: str = 'llm'
 
     def __init__(self, config: LLMConfig):
         self.config = config
 
+    async def _resilient(self, operation: Callable[[], Awaitable[R]], description: str, timeout: float | None=None) -> R:
+        from .resilience import call_with_resilience
+        return await call_with_resilience(operation, timeout=self.config.timeout_seconds if timeout is None else timeout, max_retries=self.config.max_retries, retry_base_delay=self.config.retry_base_delay, retry_max_delay=self.config.retry_max_delay, provider=self.provider_name, description=description)
+
+    async def _embed_batch_bounded(self, texts: list[str]) -> list[list[float]]:
+        semaphore = asyncio.Semaphore(self.config.embedding_concurrency)
+
+        async def embed_one(text: str) -> list[float]:
+            async with semaphore:
+                return await self.embed(text)
+        return list(await asyncio.gather(*(embed_one(t) for t in texts)))
+
     @abstractmethod
-    async def generate(
-        self,
-        prompt: str,
-        system_prompt: str | None = None,
-        temperature: float | None = None,
-        max_tokens: int | None = None,
-        model_tier: ModelTier = ModelTier.DEFAULT,
-    ) -> str:
+    async def generate(self, prompt: str, system_prompt: str | None=None, temperature: float | None=None, max_tokens: int | None=None, model_tier: ModelTier=ModelTier.DEFAULT) -> str:
         pass
 
     @abstractmethod
-    async def generate_structured(
-        self, prompt: str, response_model: type[T], system_prompt: str | None = None, max_tokens: int | None = None
-    ) -> T:
+    async def generate_structured(self, prompt: str, response_model: type[T], system_prompt: str | None=None, max_tokens: int | None=None) -> T:
         pass
 
     @abstractmethod

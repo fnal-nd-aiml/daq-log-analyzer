@@ -5,12 +5,11 @@ Category: Utility
 Author: artdaq team
 Depends: models
 Exports: LearningConfig, PatternCandidate
-Complexity: Low | Lines: 24
+Complexity: Low | Lines: 22
 """
 
 from dataclasses import dataclass, field
 from srcs.models import ErrorSignature
-
 
 @dataclass
 class LearningConfig:
@@ -22,7 +21,6 @@ class LearningConfig:
     min_samples_for_confidence: int = 5
     min_accuracy_threshold: float = 0.5
     min_samples_for_deactivation: int = 10
-
 
 @dataclass
 class PatternCandidate:

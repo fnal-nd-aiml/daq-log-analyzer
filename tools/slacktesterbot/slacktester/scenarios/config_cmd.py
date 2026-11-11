@@ -1,0 +1,8 @@
+from tools.slacktesterbot.slacktester.scenarios.base import BaseScenario, TestCase
+
+class ConfigScenario(BaseScenario):
+    name = 'config'
+    description = 'Config command parsing'
+
+    def get_test_cases(self) -> list[TestCase]:
+        return [TestCase(name='config_show_all', command='config', expected={'error': False, 'parse_result': {'setting': None, 'value': None}}, description='Config command without args shows all settings'), TestCase(name='config_verbose_on', command='config verbose on', expected={'error': False, 'parse_result': {'setting': 'verbose', 'value': 'on'}}, description='Config set verbose on'), TestCase(name='config_verbose_off', command='config verbose off', expected={'error': False, 'parse_result': {'setting': 'verbose', 'value': 'off'}}, description='Config set verbose off'), TestCase(name='config_llm_logging_on', command='config llm-logging on', expected={'error': False, 'parse_result': {'setting': 'llm-logging', 'value': 'on'}}, description='Config set llm-logging on'), TestCase(name='config_full_output_on', command='config full-output on', expected={'error': False, 'parse_result': {'setting': 'full-output', 'value': 'on'}}, description='Config set full-output on'), TestCase(name='config_invalid_setting', command='config invalid-setting on', expected={'error': False, 'parse_result': {'setting': 'invalid-setting', 'value': 'on'}}, description='Config with invalid setting (validation done elsewhere)'), TestCase(name='config_setting_show', command='config verbose', expected={'error': False, 'parse_result': {'setting': 'verbose', 'value': None}}, description='Config show specific setting value')]

@@ -5,7 +5,7 @@ Category: Utility
 Author: artdaq team
 Depends: None
 Exports: CodeIndex
-Complexity: Medium | Lines: 345
+Complexity: Medium | Lines: 277
 """
 
 import json
@@ -19,9 +19,7 @@ from .call_graph import CallGraphMixin
 from .config import CodeIndexConfig
 from .dependencies import DependencyMixin
 from .symbol_search import SymbolSearchMixin
-
 logger = logging.getLogger(__name__)
-
 
 class CodeIndex(SymbolSearchMixin, CallGraphMixin, DependencyMixin):
     SCHEMA = """
@@ -122,41 +120,34 @@ class CodeIndex(SymbolSearchMixin, CallGraphMixin, DependencyMixin):
 
     def _init_db(self) -> None:
         with sqlite3.connect(self.config.index_path) as conn:
-            conn.execute("PRAGMA foreign_keys = ON")
+            conn.execute('PRAGMA foreign_keys = ON')
             conn.executescript(self.SCHEMA)
             self._migrate_db(conn)
 
     def _migrate_db(self, conn: sqlite3.Connection) -> None:
-        cursor = conn.execute("PRAGMA table_info(files)")
+        cursor = conn.execute('PRAGMA table_info(files)')
         columns = {row[1] for row in cursor.fetchall()}
-        if "is_stale" not in columns:
+        if 'is_stale' not in columns:
             try:
-                conn.execute("ALTER TABLE files ADD COLUMN is_stale BOOLEAN DEFAULT FALSE")
-                logger.info("Added is_stale column to files table")
+                conn.execute('ALTER TABLE files ADD COLUMN is_stale BOOLEAN DEFAULT FALSE')
+                logger.info('Added is_stale column to files table')
             except sqlite3.OperationalError:
                 pass
-        if "content_hash" not in columns:
+        if 'content_hash' not in columns:
             try:
-                conn.execute("ALTER TABLE files ADD COLUMN content_hash TEXT")
-                logger.info("Added content_hash column to files table")
+                conn.execute('ALTER TABLE files ADD COLUMN content_hash TEXT')
+                logger.info('Added content_hash column to files table')
             except sqlite3.OperationalError:
                 pass
 
-    def build_index(self, progress_callback: Callable[[int, int, Path], None] | None = None) -> dict[str, Any]:
-        stats: dict[str, Any] = {
-            "files_indexed": 0,
-            "functions_found": 0,
-            "classes_found": 0,
-            "function_calls_found": 0,
-            "dependencies_found": 0,
-            "errors": [],
-        }
+    def build_index(self, progress_callback: Callable[[int, int, Path], None] | None=None) -> dict[str, Any]:
+        stats: dict[str, Any] = {'files_indexed': 0, 'functions_found': 0, 'classes_found': 0, 'function_calls_found': 0, 'dependencies_found': 0, 'errors': []}
         files_to_index: list[Path] = []
         for root in self.config.source_roots:
             if not root.exists():
                 continue
             for ext in self.config.extensions:
-                files_to_index.extend(root.rglob(f"*{ext}"))
+                files_to_index.extend(root.rglob(f'*{ext}'))
         filtered_files = []
         for file_path in files_to_index:
             excluded = False
@@ -167,113 +158,74 @@ class CodeIndex(SymbolSearchMixin, CallGraphMixin, DependencyMixin):
             if not excluded:
                 filtered_files.append(file_path)
         total = len(filtered_files)
-        logger.info(f"Indexing {total} files...")
+        logger.info(f'Indexing {total} files...')
         with sqlite3.connect(self.config.index_path) as conn:
-            conn.execute("PRAGMA foreign_keys = ON")
-            conn.execute("DELETE FROM function_calls")
-            conn.execute("DELETE FROM file_dependencies")
-            conn.execute("DELETE FROM symbols")
-            conn.execute("DELETE FROM functions")
-            conn.execute("DELETE FROM classes")
-            conn.execute("DELETE FROM files")
+            conn.execute('PRAGMA foreign_keys = ON')
+            conn.execute('DELETE FROM function_calls')
+            conn.execute('DELETE FROM file_dependencies')
+            conn.execute('DELETE FROM symbols')
+            conn.execute('DELETE FROM functions')
+            conn.execute('DELETE FROM classes')
+            conn.execute('DELETE FROM files')
             for i, file_path in enumerate(filtered_files):
                 if progress_callback:
                     progress_callback(i + 1, total, file_path)
                 try:
                     self._index_file(conn, file_path, stats)
                 except Exception as e:
-                    logger.warning(f"Failed to index {file_path}: {e}")
-                    stats["errors"].append(str(file_path))
+                    logger.warning(f'Failed to index {file_path}: {e}')
+                    stats['errors'].append(str(file_path))
             conn.commit()
         resolved = self.resolve_call_references()
-        stats["call_references_resolved"] = resolved
-        logger.info(
-            f"Indexed {stats['files_indexed']} files, {stats['functions_found']} functions, {stats['classes_found']} classes, {stats['function_calls_found']} function calls, {stats['dependencies_found']} dependencies, {resolved} call references resolved"
-        )
+        stats['call_references_resolved'] = resolved
+        logger.info(f"Indexed {stats['files_indexed']} files, {stats['functions_found']} functions, {stats['classes_found']} classes, {stats['function_calls_found']} function calls, {stats['dependencies_found']} dependencies, {resolved} call references resolved")
         return stats
 
     def _index_file(self, conn: sqlite3.Connection, file_path: Path, stats: dict[str, Any]) -> None:
         mtime = file_path.stat().st_mtime
-        cursor = conn.execute("SELECT id, last_modified FROM files WHERE path = ?", (str(file_path),))
+        cursor = conn.execute('SELECT id, last_modified FROM files WHERE path = ?', (str(file_path),))
         row = cursor.fetchone()
         if row and row[1] == mtime:
             return
         result = self.extractor.extract_from_file(file_path)
-        language = CodeParser.LANGUAGE_EXTENSIONS.get(file_path.suffix.lower(), "unknown")
+        language = CodeParser.LANGUAGE_EXTENSIONS.get(file_path.suffix.lower(), 'unknown')
         if row:
             file_id = row[0]
-            conn.execute(
-                "UPDATE files SET last_modified = ?, indexed_at = CURRENT_TIMESTAMP, is_stale = FALSE WHERE id = ?",
-                (mtime, file_id),
-            )
-            conn.execute("DELETE FROM function_calls WHERE caller_file_id = ?", (file_id,))
-            conn.execute("DELETE FROM file_dependencies WHERE source_file_id = ?", (file_id,))
-            conn.execute("DELETE FROM functions WHERE file_id = ?", (file_id,))
-            conn.execute("DELETE FROM classes WHERE file_id = ?", (file_id,))
-            conn.execute("DELETE FROM symbols WHERE file_id = ?", (file_id,))
+            conn.execute('UPDATE files SET last_modified = ?, indexed_at = CURRENT_TIMESTAMP, is_stale = FALSE WHERE id = ?', (mtime, file_id))
+            conn.execute('DELETE FROM function_calls WHERE caller_file_id = ?', (file_id,))
+            conn.execute('DELETE FROM file_dependencies WHERE source_file_id = ?', (file_id,))
+            conn.execute('DELETE FROM functions WHERE file_id = ?', (file_id,))
+            conn.execute('DELETE FROM classes WHERE file_id = ?', (file_id,))
+            conn.execute('DELETE FROM symbols WHERE file_id = ?', (file_id,))
         else:
-            cursor = conn.execute(
-                "INSERT INTO files (path, language, last_modified, is_stale) VALUES (?, ?, ?, FALSE)",
-                (str(file_path), language, mtime),
-            )
+            cursor = conn.execute('INSERT INTO files (path, language, last_modified, is_stale) VALUES (?, ?, ?, FALSE)', (str(file_path), language, mtime))
             file_id = cursor.lastrowid
-        for func in result.get("functions", []):
-            conn.execute(
-                """
+        for func in result.get('functions', []):
+            conn.execute('''
                 INSERT INTO functions (
                     name, file_id, start_line, end_line, signature,
                     return_type, parameters_json, class_name, modifiers_json, docstring
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """,
-                (
-                    func.name,
-                    file_id,
-                    func.start_line,
-                    func.end_line,
-                    func.signature,
-                    func.return_type,
-                    json.dumps(func.parameters),
-                    func.class_name,
-                    json.dumps(func.modifiers),
-                    func.docstring,
-                ),
-            )
-            conn.execute(
-                "INSERT INTO symbols (name, symbol_type, file_id, line, context) VALUES (?, ?, ?, ?, ?)",
-                (func.name, "function", file_id, func.start_line, func.signature),
-            )
-            stats["functions_found"] += 1
-        for cls in result.get("classes", []):
-            conn.execute(
-                """
+                ''', (func.name, file_id, func.start_line, func.end_line, func.signature, func.return_type, json.dumps(func.parameters), func.class_name, json.dumps(func.modifiers), func.docstring))
+            conn.execute('INSERT INTO symbols (name, symbol_type, file_id, line, context) VALUES (?, ?, ?, ?, ?)', (func.name, 'function', file_id, func.start_line, func.signature))
+            stats['functions_found'] += 1
+        for cls in result.get('classes', []):
+            conn.execute('''
                 INSERT INTO classes (
                     name, file_id, start_line, end_line, signature,
                     base_classes_json, methods_json
                 ) VALUES (?, ?, ?, ?, ?, ?, ?)
-                """,
-                (
-                    cls.name,
-                    file_id,
-                    cls.start_line,
-                    cls.end_line,
-                    cls.signature,
-                    json.dumps(cls.base_classes),
-                    json.dumps(cls.methods),
-                ),
-            )
-            conn.execute(
-                "INSERT INTO symbols (name, symbol_type, file_id, line, context) VALUES (?, ?, ?, ?, ?)",
-                (cls.name, "class", file_id, cls.start_line, cls.signature),
-            )
-            stats["classes_found"] += 1
-        cursor = conn.execute("SELECT id, name, start_line FROM functions WHERE file_id = ?", (file_id,))
+                ''', (cls.name, file_id, cls.start_line, cls.end_line, cls.signature, json.dumps(cls.base_classes), json.dumps(cls.methods)))
+            conn.execute('INSERT INTO symbols (name, symbol_type, file_id, line, context) VALUES (?, ?, ?, ?, ?)', (cls.name, 'class', file_id, cls.start_line, cls.signature))
+            stats['classes_found'] += 1
+        cursor = conn.execute('SELECT id, name, start_line FROM functions WHERE file_id = ?', (file_id,))
         func_map = {(row[1], row[2]): row[0] for row in cursor.fetchall()}
         parsed = self.parser.parse_file(file_path)
         func_nodes: dict[int, ParsedNode] = {}
         if parsed.root:
-            for func_node in parsed.root.find_all("function_definition"):
+            for func_node in parsed.root.find_all('function_definition'):
                 func_nodes[func_node.start_line] = func_node
-        for func in result.get("functions", []):
+        for func in result.get('functions', []):
             func_id = func_map.get((func.name, func.start_line))
             if func_id is None:
                 continue
@@ -281,35 +233,22 @@ class CodeIndex(SymbolSearchMixin, CallGraphMixin, DependencyMixin):
             if matching_node:
                 calls = self.extractor._extract_calls_from_node(matching_node, parsed.language)
                 for callee_name, call_line, call_type in calls:
-                    conn.execute(
-                        """
+                    conn.execute('''
                         INSERT INTO function_calls (
                             caller_function_id, caller_file_id, callee_name,
                             call_line, call_type
                         ) VALUES (?, ?, ?, ?, ?)
-                        """,
-                        (func_id, file_id, callee_name, call_line, call_type),
-                    )
-                    stats["function_calls_found"] += 1
-        for dep in result.get("dependencies", []):
-            conn.execute(
-                """
+                        ''', (func_id, file_id, callee_name, call_line, call_type))
+                    stats['function_calls_found'] += 1
+        for dep in result.get('dependencies', []):
+            conn.execute('''
                 INSERT INTO file_dependencies (
                     source_file_id, imported_path, import_type,
                     is_system, line_number, imported_names_json
                 ) VALUES (?, ?, ?, ?, ?, ?)
-                """,
-                (
-                    file_id,
-                    dep.imported_path,
-                    dep.import_type,
-                    dep.is_system,
-                    dep.line_number,
-                    json.dumps(dep.imported_names),
-                ),
-            )
-            stats["dependencies_found"] += 1
-        stats["files_indexed"] += 1
+                ''', (file_id, dep.imported_path, dep.import_type, dep.is_system, dep.line_number, json.dumps(dep.imported_names)))
+            stats['dependencies_found'] += 1
+        stats['files_indexed'] += 1
 
     def get_function_source(self, name: str) -> str | None:
         functions = self.find_function(name)
@@ -318,8 +257,8 @@ class CodeIndex(SymbolSearchMixin, CallGraphMixin, DependencyMixin):
         func = functions[0]
         if not func.file_path.exists():
             return None
-        lines = func.file_path.read_text().split("\n")
-        return "\n".join(lines[func.start_line - 1 : func.end_line])
+        lines = func.file_path.read_text().split('\n')
+        return '\n'.join(lines[func.start_line - 1:func.end_line])
 
     def get_class_source(self, name: str) -> str | None:
         classes = self.find_class(name)
@@ -328,28 +267,21 @@ class CodeIndex(SymbolSearchMixin, CallGraphMixin, DependencyMixin):
         cls = classes[0]
         if not cls.file_path.exists():
             return None
-        lines = cls.file_path.read_text().split("\n")
-        return "\n".join(lines[cls.start_line - 1 : cls.end_line])
+        lines = cls.file_path.read_text().split('\n')
+        return '\n'.join(lines[cls.start_line - 1:cls.end_line])
 
     def get_stats(self) -> dict[str, int]:
         with sqlite3.connect(self.config.index_path) as conn:
-            cursor = conn.execute("SELECT COUNT(*) FROM files")
+            cursor = conn.execute('SELECT COUNT(*) FROM files')
             files = cursor.fetchone()[0]
-            cursor = conn.execute("SELECT COUNT(*) FROM functions")
+            cursor = conn.execute('SELECT COUNT(*) FROM functions')
             functions = cursor.fetchone()[0]
-            cursor = conn.execute("SELECT COUNT(*) FROM classes")
+            cursor = conn.execute('SELECT COUNT(*) FROM classes')
             classes = cursor.fetchone()[0]
-            cursor = conn.execute("SELECT COUNT(*) FROM symbols")
+            cursor = conn.execute('SELECT COUNT(*) FROM symbols')
             symbols = cursor.fetchone()[0]
-            cursor = conn.execute("SELECT COUNT(*) FROM function_calls")
+            cursor = conn.execute('SELECT COUNT(*) FROM function_calls')
             function_calls = cursor.fetchone()[0]
-            cursor = conn.execute("SELECT COUNT(*) FROM file_dependencies")
+            cursor = conn.execute('SELECT COUNT(*) FROM file_dependencies')
             dependencies = cursor.fetchone()[0]
-            return {
-                "files": files,
-                "functions": functions,
-                "classes": classes,
-                "symbols": symbols,
-                "function_calls": function_calls,
-                "dependencies": dependencies,
-            }
+            return {'files': files, 'functions': functions, 'classes': classes, 'symbols': symbols, 'function_calls': function_calls, 'dependencies': dependencies}

@@ -1,0 +1,19 @@
+%MSG-e CAENV1730Readout:  Early 16-Jan-2026 15:24:47 CST pre-events CAENV1730Readout_generator.cc:1034
+CAENReadData() tried to write 312596 bytes into a 162208-byte buffer; dropping.
+%MSG
+%MSG-e CAENV1730Readout:  Early 16-Jan-2026 15:24:47 CST pre-events PoolBuffer.hh:39
+verify_redzone: Redzone was overwritten; DataBlock.index=14, size=162208, data_size=160016, end - begin=162240, redzone size=8
+%MSG
+%MSG-e WorkerThread:  Early 16-Jan-2026 15:24:47 CST pre-events workerThread.cpp:51
+Caught exception while running GetDataWorkerThread thread.
+%MSG
+%MSG-i WorkerThread:  Early 16-Jan-2026 15:24:47 CST pre-events workerThread.cpp:53
+Stopped GetDataWorkerThread thread after 883098 checks.
+%MSG
+%MSG-w icaruspmtewbot01_FragmentBuffer:  Early 16-Jan-2026 15:24:59 CST  pre-events FragmentBuffer.cc:610
+applyRequestsWindowMode_CheckAndFillDataBuffer: A timeout occurred waiting for data to close the request window ({1768598689227608136-1768598689230608136}, buffer={1768598677121537664-1768598687094584432} ). Time waiting: 10008744 us (> 10000000 us).
+%MSG
+%MSG-w icaruspmtewbot01_FragmentBuffer:  Early 16-Jan-2026 15:24:59 CST  pre-events FragmentBuffer.cc:610
+applyRequestsWindowMode_CheckAndFillDataBuffer: A timeout occurred waiting for data to close the request window ({1768598689260608328-1768598689263608328}, buffer={1768598677121537664-1768598687094584432} ). Time waiting: 10001038 us (> 10000000 us).
+%MSG
+

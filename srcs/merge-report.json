@@ -1,0 +1,1247 @@
+{
+  "run_info": {
+    "timestamp": "2026-11-10T19:43:28.350125",
+    "target_dir": "/home/nfs/lukhanin/work/log-analyzer-agent/dist/srcs",
+    "metadata_dir": "/home/nfs/lukhanin/work/log-analyzer-agent/metadata",
+    "mode": "in-place"
+  },
+  "statistics": {
+    "total_files": 246,
+    "processed": 246,
+    "skipped": 0,
+    "errors": 0
+  },
+  "files": [
+    {
+      "path": "models/__init__.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "models/base.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "models/callbacks.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "models/code_relationships.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "models/hypothesis_report.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "models/investigation.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "models/investigation_config.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "models/knowledge.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "models/log_parser.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "models/logs.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "models/question.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "models/results.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "models/source_location.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "__init__.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "agent/__init__.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "agent/config.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "agent/coordinator.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "agent/dataflow.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "agent/errors.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "agent/metrics.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "agent/tools/__init__.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "agent/tools/archivist_tools.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "agent/tools/base.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "agent/tools/code_tools.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "agent/tools/configuration_tools.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "agent/tools/extraction_tools.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "agent/tools/forensics_tools.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "agent/tools/investigation_tools.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "agent/tools/pattern_tools.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "api/__init__.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "api/app.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "api/auth.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "api/client.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "api/constants.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "api/dependencies.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "api/errors.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "api/middleware.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "api/routes/__init__.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "api/routes/admin.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "api/routes/agent.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "api/routes/binders.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "api/routes/calibration.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "api/routes/health.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "api/routes/investigations.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "api/routes/metrics.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "api/routes/patterns.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "api/routes/questions.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "api/sessions.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "api/sse.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "api/tools/__init__.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "api/tools/admin_tools.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "api/tools/code_tools.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "api/tools/finding_tools.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "api/tools/knowledge_tools.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "api/tools/log_tools.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "api/tools/pipeline_tools.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "api/tools/router.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "cli/__init__.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "cli/ask.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "cli/display.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "cli/feedback.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "cli/init.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "cli/investigate.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "cli/llm_display.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "cli/main.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "cli/source_cmd.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "cli/verbose_display.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "config.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "config_paths.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "extraction/__init__.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "extraction/errors.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "extraction/extractor.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "extraction/extractors/__init__.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "extraction/extractors/base.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "extraction/extractors/cpp.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "extraction/extractors/python.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "extraction/extractors/strategies/__init__.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "extraction/extractors/strategies/regex.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "extraction/extractors/strategies/tree_sitter.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "extraction/indexer/__init__.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "extraction/indexer/call_graph.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "extraction/indexer/config.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "extraction/indexer/dependencies.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "extraction/indexer/index.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "extraction/indexer/symbol_search.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "extraction/parser.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "extraction/source_locator.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "extraction/summarizer.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "knowledge/__init__.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "knowledge/base.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "knowledge/calibration.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "knowledge/chroma_store.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "knowledge/doc_loader.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "knowledge/errors.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "knowledge/learning.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "knowledge/learning_config.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "knowledge/logging_wrapper.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "knowledge/meta_learner.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "knowledge/pattern_learner.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "knowledge/patterns.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "knowledge/postgres_schema.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "knowledge/postgres_store.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "knowledge/reporting.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "knowledge/row_mappers.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "knowledge/sql/__init__.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "knowledge/sql/connection.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "knowledge/sql/dialect.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "knowledge/sql_store.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "knowledge/sqlite_schema.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "knowledge/sqlite_store.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "knowledge/store_factory.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "knowledge/store_interface.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "llm/__init__.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "llm/anthropic.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "llm/errors.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "llm/factory.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "llm/logging_wrapper.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "llm/ollama.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "llm/openrouter.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "llm/prompt_builder.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "llm/provider.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "llm/recording_wrapper.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "llm/resilience.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "llm/token_utils.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "mcp/__init__.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "mcp/context.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "mcp/server.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "mcp/tools/__init__.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "mcp/tools/admin.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "mcp/tools/analytics.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "mcp/tools/audit.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "mcp/tools/binder.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "mcp/tools/calibration.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "mcp/tools/investigation.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "mcp/tools/llm.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "mcp/tools/patterns.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "mcp/tools/qa.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "msgspy/__init__.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "msgspy/config.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "msgspy/errors.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "msgspy/filter.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "msgspy/models.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "msgspy/parser.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "msgspy/receiver.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "msgspy/spy.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "msgspy/writer.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "observability.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "output/__init__.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "output/markdown_formatter.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "output/phase_formatter.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "output/renderer.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "persona/__init__.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "persona/archivist.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "persona/base.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "persona/capabilities.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "persona/chronicler.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "persona/detective.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "persona/judge.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "persona/learner.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "persona/logician.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "persona/orchestration/__init__.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "persona/orchestration/evidence_orchestrator.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "persona/orchestration/evidence_relevance.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "persona/orchestration/retrieval_orchestrator.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "persona/orchestration/strategy.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "persona/orchestrator.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "persona/personas.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "persona/registry.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "persona/skeptic.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "persona/synthesizer.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "persona/theorist.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "pipeline/__init__.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "pipeline/conditions.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "pipeline/config.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "pipeline/contracts.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "pipeline/engine.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "pipeline/executor.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "pipeline/hooks.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "pipeline/panel.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "pipeline/persona_executor.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "pipeline/plugins.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "pipeline/result_builders.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "pipeline/router.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "prompts/__init__.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "prompts/errors.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "prompts/formatters.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "prompts/loader.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "prompts/registry.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "prompts/types.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "slack/__init__.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "slack/app.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "slack/binder_formatter.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "slack/binder_handler.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "slack/commands.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "slack/config_store.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "slack/file_handler.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "slack/formatter.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "slack/progress.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "slack/queue.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "slack/settings.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "source/__init__.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "source/config.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "source/errors.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "source/manager.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "workbinder/__init__.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "workbinder/artifact_renderer.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "workbinder/artifacts/__init__.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "workbinder/artifacts/parsers/__init__.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "workbinder/artifacts/parsers/base.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "workbinder/artifacts/parsers/boardreader_identification.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "workbinder/artifacts/parsers/causal_chain.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "workbinder/artifacts/parsers/challenge.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "workbinder/artifacts/parsers/conclusion.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "workbinder/artifacts/parsers/evidence.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "workbinder/artifacts/parsers/hypothesis.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "workbinder/artifacts/parsers/json_utils.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "workbinder/artifacts/parsers/log_bundle.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "workbinder/artifacts/parsers/merged_timeline.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "workbinder/artifacts_types.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "workbinder/binder.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "workbinder/binder_parts/__init__.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "workbinder/binder_parts/_state.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "workbinder/binder_parts/accessors.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "workbinder/binder_parts/audit.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "workbinder/binder_parts/code_artifacts.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "workbinder/binder_parts/crud.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "workbinder/binder_parts/investigation_artifacts.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "workbinder/binder_parts/llm_tracking.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "workbinder/binder_parts/phases.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "workbinder/binder_parts/query.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "workbinder/binder_parts/serialization.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "workbinder/persistence.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "workbinder/relevance.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "workbinder/serializer.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "workbinder/store_parts/__init__.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "workbinder/store_parts/_helpers.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "workbinder/store_parts/_state.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "workbinder/store_parts/artifact_ops.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "workbinder/store_parts/artifacts.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "workbinder/store_parts/audit.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "workbinder/store_parts/binder_io.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "workbinder/store_parts/calibration.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "workbinder/store_parts/llm.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "workbinder/store_parts/patterns.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "workbinder/store_parts/state.py",
+      "status": "processed",
+      "header_lines": 9
+    },
+    {
+      "path": "workbinder/tools.py",
+      "status": "processed",
+      "header_lines": 9
+    }
+  ],
+  "errors": []
+}

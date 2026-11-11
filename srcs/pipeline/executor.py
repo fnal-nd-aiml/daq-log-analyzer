@@ -5,15 +5,13 @@ Category: Utility
 Author: artdaq team
 Depends: None
 Exports: PhaseExecutor, ExecutorRegistry
-Complexity: Low | Lines: 32
+Complexity: Low | Lines: 29
 """
 
 import logging
 from abc import ABC, abstractmethod
 from typing import Any
-
 logger = logging.getLogger(__name__)
-
 
 class PhaseExecutor(ABC):
 
@@ -25,7 +23,6 @@ class PhaseExecutor(ABC):
     @abstractmethod
     async def execute(self, inputs: dict[str, Any], config: dict[str, Any]) -> dict[str, Any]:
         pass
-
 
 class ExecutorRegistry:
 

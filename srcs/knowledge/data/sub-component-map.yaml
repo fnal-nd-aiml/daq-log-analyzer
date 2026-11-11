@@ -1,0 +1,33 @@
+# Built-in sub-component -> documentation file mapping.
+#
+# Maps artdaq sub-component / function names that appear in log messages to the
+# stem of the reference document that describes their parent component. Used by
+# DocStore.match_components() and extract_names_from_message() to resolve
+# components that have no documentation file of their own.
+#
+# This file is the package default and is version controlled so a fresh checkout
+# and a fresh deployment behave identically. Operators extend or override it with
+# a site-local file (default: data/docs/sub-component-map.yaml, configurable via
+# `investigation.subcomponent_map_path` in config.yaml) — entries there are
+# overlaid on top of these, so a site file only needs the deltas.
+#
+# Values are document stems (no .md suffix) that must exist in the docs
+# directory for a match to resolve.
+
+# --- CAEN V1730 digitizer readout ---
+WorkerThread: CAENV1730Readout
+CAENReadData: CAENV1730Readout
+CAENCrateReadout: CAENV1730Readout
+
+# --- commandable fragment generator (artdaq core) ---
+FragmentBuffer: commandable-fragment-generator
+BoardReaderCore: commandable-fragment-generator
+DataSenderManager: commandable-fragment-generator
+applyRequestsWindowMode: commandable-fragment-generator
+CheckAndFillDataBuffer: commandable-fragment-generator
+
+# --- Bern CRT ---
+BernCRTZMQ: BernCRTData
+
+# --- ICARUS trigger ---
+ICARUSTrigger: ICARUSTriggerV3

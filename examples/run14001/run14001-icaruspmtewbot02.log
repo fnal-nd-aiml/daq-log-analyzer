@@ -1,0 +1,28 @@
+%MSG-w CAENV1730Readout:  Early 16-Jan-2026 15:24:47 CST pre-events CAENV1730Readout_generator.cc:1144
+(FragID=8208) Missing triggers; current trigger eventCounter=1, previous trigger eventCounter / gap  = 8214316 / 8562901, freeBlockCount=3080, activeBlockCount=0, fullyDrainedCount=0
+%MSG
+%MSG-w CAENV1730Readout:  Early 16-Jan-2026 15:24:47 CST pre-events CAENV1730Readout_generator.cc:1379
+Fragment assigned timestamp is after timestamp from fragment creation! Causality problem!!ts_frag - ts_now = 169455208 ns!
+%MSG
+%MSG-w CAENV1730Readout:  Early 16-Jan-2026 15:24:47 CST pre-events CAENV1730Readout_generator.cc:1411
+Missing data; current fragment sequenceID=1, previous fragment sequenceID / gap  = 8214316 / 18446744073701337301
+%MSG
+%MSG-e CAENV1730Readout:  Early 16-Jan-2026 15:24:47 CST pre-events CAENV1730Readout_generator.cc:1419
+SequenceIDs processed out of order!! 1 < 8214316
+%MSG
+%MSG-w CAENV1730Readout:  Early 16-Jan-2026 15:24:47 CST pre-events CAENV1730Readout_generator.cc:1379
+Fragment assigned timestamp is after timestamp from fragment creation! Causality problem!!ts_frag - ts_now = 167857536 ns!
+%MSG
+%MSG-w CAENV1730Readout:  Early 16-Jan-2026 15:24:47 CST pre-events CAENV1730Readout_generator.cc:1379
+Fragment assigned timestamp is after timestamp from fragment creation! Causality problem!!ts_frag - ts_now = 166441136 ns!
+%MSG
+%MSG-w CAENV1730Readout:  Early 16-Jan-2026 15:24:47 CST pre-events CAENV1730Readout_generator.cc:1379
+Fragment assigned timestamp is after timestamp from fragment creation! Causality problem!!ts_frag - ts_now = 164947824 ns!
+%MSG
+%MSG-w CAENV1730Readout:  Early 16-Jan-2026 15:24:47 CST pre-events CAENV1730Readout_generator.cc:1379
+Fragment assigned timestamp is after timestamp from fragment creation! Causality problem!!ts_frag - ts_now = 163627552 ns!
+%MSG
+%MSG-w CAENV1730Readout:  Early 16-Jan-2026 15:24:47 CST pre-events CAENV1730Readout_generator.cc:1379
+Fragment assigned timestamp is after timestamp from fragment creation! Causality problem!!ts_frag - ts_now = 162537712 ns!
+%MSG
+
